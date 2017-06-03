@@ -1,0 +1,76 @@
+// 
+//
+// DirectX Toolkit 설명서.
+//
+// DirectX Toolkit : DX11 ( Dec.8, 2016) 
+// 제공 Present : Chuck Walbourn @ Microsoft / MSFT (http://blogs.msdn.com/b/chuckw/)
+// 편집 Edit : Kihong Kim / onlysonim@gmail.com 
+// Update : 2016.12.07
+//  
+
+■ DirectX Tool Kit 
+ DX 유틸리티 및 일반화 라이브러리 모음집. 
+ DX API 사용시 필요한 여러 기능 클래스 및 서비스를 제공합니다.
+ 자세한 내용을 아래를 참조하세요.
+ 라이브러리 설명 :  DXTK/ReadMe.txt
+ 참조 : https:blogs.msdn.microsoft.com/chuckw/2012/03/02/directxtk/
+ 
+  
+■  버전
+ DirectXTK, December 5, 2016 (DX11)
+  
+■  대상 플렛폼
+ Windows Desk Top Apps(Windows 7/8/10), XBox One, Windows Mobile (Windows Phone 8.1), Windows Store Apps 지원.
+  
+■  제공 기능
+ Math, State Objects, Texture, EffectSystem, Model(XFile) Animation, Font, Audio (XAudio 및 Wave), 등..
+  
+■ 권장 개발환경
+ Visual Studio 2013 (update 5), Visual Studio 2015 (update 3), Windows 7 (sp1) 이상.
+
+
+
+■ DirecXTK 프로젝트에 추가.
+ DirectXTK 를 보다 편하게 사용하기 위해서 Project 속성 추가가 필요합니다.
+ 다음 순서대로 Project 속성을 변경/추가 하십시요.
+
+ 1. C/C++>입력>일반>추가 포함 디렉터리 
+     (추가) ../Yena/DXTK/Inc
+ 2. 링커>일반>추가 라이브러리 디렉터리 
+     (추가) ../Yena/DXTK/Lib
+ 3. 프로젝트에 메인헤더 추가. 
+     (추가) #include "DirectXTK.h"
+ 
+  (옵션1) DirectXTK 라이브러리 파일 추가 (이미 DirectXTK.h 에 포함됨)
+         (위치) 링커 >입력>추가 종속성 
+		 (추가) DirectXTK.lib
+         또는, 아래 '라이브러리 링크' 와 같이 직접 명시할 것  
+
+  (옵션2) DirectXTK 클래스별 헤더 선언 (이미 DirectXTK.h 에 추가됨)
+         여러분의 프로젝트에 필요한 헤더를 추가. (아래 참조) 
+
+  
+
+ ■ DirectXTK 라이브러리 링크
+
+#ifdef _DEBUG 
+#pragma comment(lib, "DirectXTKd")		//32bit + 디버그 버전.
+//#pragma comment(lib, "DirectXTK64d")	//64bit + 디버그 버전.
+#else
+#pragma comment(lib, "DirectXTK")		//32bit 버전.
+//#pragma comment(lib, "DiectXTK64")	//64bit 버전 
+#endif
+
+
+
+■ DirectXTK 헤더 선언 
+ 여러분의 프로젝트에 필요한 것만 선택적 추가가 가능합니다.
+
+ #include "SimpleMath.h"		//수학 클래스.
+ #include "SpriteFont.h"		//폰트 클래스.
+
+
+
+
+
+-- 문서 끝 --

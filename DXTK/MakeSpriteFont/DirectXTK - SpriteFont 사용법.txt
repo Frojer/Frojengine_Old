@@ -1,0 +1,59 @@
+//
+// SpriteFont 사용법
+//
+[라이브러리] 
+1. B3Yena
+2. Direct Toolkit for DX11
+3. Dirext Toolkit / SpriteFont 및 MakeSpriteFont.exe
+            
+[빌드과정]
+1. Direct ToolKit 빌드 : DirectXTK-Master / DirectXTK_Desktiop_2015 : "DirectXTK.lib"
+2. 스프라이트 폰트 제작 : MakeSpriteFont.exe  (Batch파일 참조) : "굴림9k.sfont"
+3. 예나 이식/테스트 : B3Yena
+
+
+
+
+//
+// SpriteFont 사용 예제 코드.  
+//
+* 단, DirectX Toolkit : "DirectXTK.lib" 이 예제/프로젝트에에 첨부된 상태라고 가정한다. 
+
+1. 폰트 비트멥 생성.
+
+   트루타입 폰트 --> 비트멥 폰트 생성.
+   [참조]https://directxtk.codeplex.com/wikipage?title=MakeSpriteFont&referringTitle=SpriteFont
+
+   --> Commandline Tool 에서 MakeSpriteFont.exe 실행, 아래의 명령입력.
+  
+ 
+   MakeSpriteFont "굴림" myfile.spritefont /FontSize:12
+
+
+   --> myfile.spritefont 생성됨.
+
+
+
+2. SpriteFont 개체 생성.
+   [참조]https://directxtk.codeplex.com/wikipage?title=SpriteFont
+   
+   // 폰트용 스프라이트 뱃치 객체 생성.
+   SpriteFont* pBatch = new SpriteBatch(pDXDC);
+	
+   // 스프라이트 폰트 객체 생성.
+   SpriteFont* pFont = new SpriteFont(pDevice, L"hangul.spritefont");
+
+
+
+3. 문자열 출력.
+	
+	vector2 pos(x, y);	//출력좌표.
+
+	pBatch->Begin();
+	pFont->DrawString(pBatch, buff, pos, col);
+	pBatch->End();
+
+
+
+
+- 문서 끝 - 

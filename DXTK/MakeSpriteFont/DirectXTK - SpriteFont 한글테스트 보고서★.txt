@@ -1,0 +1,91 @@
+
+//
+// DirectX ToolKit-SpriteFont 한글 테스트
+//
+// Update. 2017.01.09. Kihong Kim / onlysonim@gmail.com
+//
+ 
+[사용환경] 
+CPU : Intel i7-3770k (3.5GHz)
+RAM : 16GB (DDR3)
+OS  : Windows7 x64 sp1
+SDK : VS2015, DX11, Windows SDK 8.1.
+
+[라이브러리] 
+1. B3Yena
+2. Direct Toolkit for DX11
+3. Dirext Toolkit / SpriteFont 및 MakeSpriteFont.exe
+            
+[빌드과정]
+1. Direct ToolKit 빌드 : DirectXTK-Master / DirectXTK_Desktiop_2015  : "DirectXTK.lib"
+2. 스프라이트 폰트 제작 : MakeSpriteFont.exe  (Batch파일 참조) : "굴림9k.sfont"
+3. 예나 이식/테스트 : B3Yena
+
+
+
+[문제1]  한글(완성형) 글자를 모두 스프라이트폰트에 포함시켜야 함 
+     
+   1. 거대텍스처 필요             --> (수정) 영문폰트(255글자)=12KB, 한글폰트(완성형, 11400 글자) = 2.91MB, (*로딩가능, 하위 시스템에서 테스트필요)
+                                  --> (수정) 추가 소요 메모리 VRAM 증가 : 약 3MB
+   2. 속도저하.                   --> (수정) 속도 저하가 그리 크지 않음. (8% 하락)
+   3. DirectWrite 하는 것을 추천. --> (수정) DirectWrtie (FontWrapper) 보다는 훨씬 빠름.(약 7.8배)
+                                           *성능하락율 =  FW : SprFont = 63% : 8%  = 7.8 : 1 
+  
+  
+
+[문제2] 조합형 처리 불가능. (해결)
+   
+    (수정후) 완성형 한글폰트 적용함 :  "굴림9k.sfont"
+
+
+[문제3] AscII / 특수기호 안됨 --> spritefont 에 일일이 추가해야 함.(덴장..)  (해결)
+
+    (수정전) MakeSpriteFont "굴림" myfile.spritefont /FontSize:10
+	(수정후) MakeSpriteFont "굴림" myfile.spritefont /FontSize:10 /CharacterRegion:0x0-0xff /CharacterRegion:0x25a0 /CharacterRegion:0xAC00-0xD7AF  /DefaultCharacter:0x5f /FastPack
+	(수정옵션) ASCII 0 ~ 255 + 특수문자'■' + Unicode 한글 완성형 총 11,440 글자 + 지정글자 미검색시 '_' 출력 + 최적화 옵션.
+
+
+[문제4] 깊이버퍼 오류. (해결) 
+
+    * 깊이연산 객체 추가
+	* StateObj_Depth_ON =  깊이연산객체(Depth ON)
+	
+	(수정전) g_pSFontBatch->Begin();																	//깊이 연산 OFF.
+	(수정후) g_pSFontBatch->Begin(SpriteSortMode_Deferred, nullptr, nullptr, StateObj_Depth_ON );	//깊이 연산 ON.
+	
+
+[문제5] 문자열 분리(\n) 가능
+
+    TCHAR msg = "테스트 문자열 입니다. \n 새 라인을 출력합니다.";
+
+	--> 하지만 2번째 문자열 부터 '흐림 Blur' 처리됨 --> 연구 필요. (해결)
+
+	 (수정후) 폰트객체 생성후 '줄간격' 설정.
+	 pFont->SetLineSpacing( 14.0f );		// 폰트크기 9 기준.
+     
+
+
+[테스트] 성능 비교 (해결)
+
+     (수정전) 메세지없이 장면 렌더링 : 4,650fps
+	 (수정전) 메세지출력 + 장면 렌더링 : 4,600 fps. (약 2% 저하)
+	 (수정후) 한글/영문 혼합 메세지 출력 + 장면 렌더링 : 4,300 fps. (약 8% 저하 )
+   
+   	 * 한글을 출력해도 충분히 처리 가능함.
+	 * 비트멥 기반의 문자 출력이기에, 빠른 처리속도, 메세지 출력시 전체 프레임 변화 미미. (해결)
+	
+	  <비교> FontWrapper 사용시
+	  메세지없이 장면 렌더링 : 4,650fps
+	  한글/영문 혼합 메세지 출력 + 장면 렌더링 : 1,700 fps.  (약 63% 저하)
+	  
+
+[결론] 
+
+1. FontWrapper  : 사용법 단순. DirectWrite 기반, 속도 저하, 
+2. SpriteFont   : 사용법 다소 복잡. Sprite 기반,  속도 우수 (약 7.8배), 한글(완성형) 폰트 수동 제작 필요, 필요한 글자코드를 일일이 수동 입력 필요.
+3. Yena 에서는 SpriteFont 를 사용 하겠음.
+
+
+
+
+- 문서 끝 - 

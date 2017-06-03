@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Frojengine">
+      <UniqueIdentifier>{1e222cb6-d0cc-45e3-bc6d-479e423e97e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\System">
+      <UniqueIdentifier>{89d6954a-7110-4a94-b972-69452acfb75b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\System\HeaderFile">
+      <UniqueIdentifier>{f4e67192-31de-4c46-a4cb-0ce86b4b5d51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\System\SourceFile">
+      <UniqueIdentifier>{45158982-502c-4825-a80d-b56ebef4b246}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\Object">
+      <UniqueIdentifier>{796f5b64-70e6-4bca-b582-f0c9e6ce3033}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\Object\SourceFile">
+      <UniqueIdentifier>{0adb4ace-940b-4e1f-8695-506b22986c43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\Object\HeaderFile">
+      <UniqueIdentifier>{196ef6c3-a39c-4615-8036-4037d45f51bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\Scene">
+      <UniqueIdentifier>{7c28d70e-e875-4bf1-9db5-e5be04cc5144}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\Scene\SourceFile">
+      <UniqueIdentifier>{d893b363-6ffa-40fe-a8d8-7e1eeaf5a7e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\Scene\HeaderFile">
+      <UniqueIdentifier>{de41c6ec-63ee-44b5-86e6-bd4b9a92ad12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\Shader">
+      <UniqueIdentifier>{188838ad-ce60-4053-ab18-36a1b3892854}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\Shader\SourceFile">
+      <UniqueIdentifier>{cf69dfc9-016d-4daf-bb18-a64c2f402df7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\Shader\HeaderFile">
+      <UniqueIdentifier>{7f248116-d23e-4457-8f8c-697af871fce8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Frojengine\System\EngineSystem.cpp">
+      <Filter>Frojengine\System\SourceFile</Filter>
+    </ClCompile>
+    <ClCompile Include="Frojengine\System\GraphicsSystem.cpp">
+      <Filter>Frojengine\System\SourceFile</Filter>
+    </ClCompile>
+    <ClCompile Include="Frojengine\System\FontSystem.cpp">
+      <Filter>Frojengine\System\SourceFile</Filter>
+    </ClCompile>
+    <ClCompile Include="Frojengine\Object\Camera.cpp">
+      <Filter>Frojengine\Object\SourceFile</Filter>
+    </ClCompile>
+    <ClCompile Include="Frojengine\Object\Mesh.cpp">
+      <Filter>Frojengine\Object\SourceFile</Filter>
+    </ClCompile>
+    <ClCompile Include="Frojengine\Object\Object.cpp">
+      <Filter>Frojengine\Object\SourceFile</Filter>
+    </ClCompile>
+    <ClCompile Include="Frojengine\Scene\Scene.cpp">
+      <Filter>Frojengine\Scene\SourceFile</Filter>
+    </ClCompile>
+    <ClCompile Include="Frojengine\Scene\SceneManager.cpp">
+      <Filter>Frojengine\Scene\SourceFile</Filter>
+    </ClCompile>
+    <ClCompile Include="Frojengine\Shader\Material.cpp">
+      <Filter>Frojengine\Shader\SourceFile</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Frojengine\Frojengine.h">
+      <Filter>Frojengine</Filter>
+    </ClInclude>
+    <ClInclude Include="Frojengine\DirectX.h">
+      <Filter>Frojengine</Filter>
+    </ClInclude>
+    <ClInclude Include="Frojengine\FrojengineDefine.h">
+      <Filter>Frojengine</Filter>
+    </ClInclude>
+    <ClInclude Include="Frojengine\System\EngineSystem.h">
+      <Filter>Frojengine\System\HeaderFile</Filter>
+    </ClInclude>
+    <ClInclude Include="Frojengine\System\GraphicsSystem.h">
+      <Filter>Frojengine\System\HeaderFile</Filter>
+    </ClInclude>
+    <ClInclude Include="Frojengine\System\FontSystem.h">
+      <Filter>Frojengine\System\HeaderFile</Filter>
+    </ClInclude>
+    <ClInclude Include="Frojengine\DirectXTK.h">
+      <Filter>Frojengine</Filter>
+    </ClInclude>
+    <ClInclude Include="Frojengine\Object\Camera.h">
+      <Filter>Frojengine\Object\HeaderFile</Filter>
+    </ClInclude>
+    <ClInclude Include="Frojengine\Object\Mesh.h">
+      <Filter>Frojengine\Object\HeaderFile</Filter>
+    </ClInclude>
+    <ClInclude Include="Frojengine\Object\Object.h">
+      <Filter>Frojengine\Object\HeaderFile</Filter>
+    </ClInclude>
+    <ClInclude Include="Frojengine\SceneList.h">
+      <Filter>Frojengine</Filter>
+    </ClInclude>
+    <ClInclude Include="Frojengine\Scene\Scene.h">
+      <Filter>Frojengine\Scene\HeaderFile</Filter>
+    </ClInclude>
+    <ClInclude Include="Frojengine\Scene\SceneManager.h">
+      <Filter>Frojengine\Scene\HeaderFile</Filter>
+    </ClInclude>
+    <ClInclude Include="Frojengine\Shader\Material.h">
+      <Filter>Frojengine\Shader\HeaderFile</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

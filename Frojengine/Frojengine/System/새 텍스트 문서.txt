@@ -1,0 +1,26 @@
+#pragma once
+#ifndef _ENGINE_SYSTEM_
+#define _ENGINE_SYSTEM_
+
+#include "..\Frojengine.h"
+
+class CEngineSystem
+{
+private:
+	HWND m_hWnd;
+
+	bool m_bEnd;
+
+	LPCWSTR m_ClassName;
+	LPCWSTR m_WindowName;
+
+public:
+	CEngineSystem();
+	CEngineSystem(const CEngineSystem& obj);
+	~CEngineSystem();
+
+	bool Create();
+	void Release();
+};
+
+#endif
