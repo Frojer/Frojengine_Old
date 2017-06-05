@@ -78,6 +78,7 @@ typedef DXGI_MODE_DESC	  DISPLAYMODE;	//DX11 ¥Î¿¿
 
 void WindowErrorW(TCHAR* file, UINT line, TCHAR* func, BOOL bMBox, HRESULT hr, TCHAR* msg, ...);
 void WindowErrorW(BOOL bMBox, TCHAR* msg, HRESULT hr, ID3DBlob* pBlob, TCHAR* filename, char* EntryPoint, char* ShaderModel);
+void WindowErrorW(BOOL bMBox, TCHAR* msg, ...);
 
 #define WindowError(hr, msg, ...)	\
 WindowErrorW(__FILEW__, __LINE__, __FUNCTIONW__, TRUE, hr, msg, __VA_ARGS__)
