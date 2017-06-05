@@ -84,6 +84,9 @@
     <ClCompile Include="Frojengine\Shader\Material.cpp">
       <Filter>Frojengine\Shader\SourceFile</Filter>
     </ClCompile>
+    <ClCompile Include="Frojengine\Shader\Shader.cpp">
+      <Filter>Frojengine\Shader\SourceFile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Frojengine\Frojengine.h">
@@ -126,6 +129,9 @@
       <Filter>Frojengine\Scene\HeaderFile</Filter>
     </ClInclude>
     <ClInclude Include="Frojengine\Shader\Material.h">
+      <Filter>Frojengine\Shader\HeaderFile</Filter>
+    </ClInclude>
+    <ClInclude Include="Frojengine\Shader\Shader.h">
       <Filter>Frojengine\Shader\HeaderFile</Filter>
     </ClInclude>
   </ItemGroup>

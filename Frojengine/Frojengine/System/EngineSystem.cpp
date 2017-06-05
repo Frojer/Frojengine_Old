@@ -434,3 +434,63 @@ void WindowErrorW(TCHAR* file, UINT line, TCHAR* func, BOOL bMBox, HRESULT hr, T
 		//GetLastError(hr);
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////// 
+//
+// 에러 메세지 처리 : 셰이더 에러 처리용.
+// 
+void WindowErrorW(BOOL bMBox, TCHAR* msg, HRESULT hr, ID3DBlob* pBlob, TCHAR* filename, char* EntryPoint, char* ShaderModel)
+{
+
+	/*//가변매개변수 처리.
+	TCHAR msgva[2048] = L"";
+	va_list vl;
+	va_start(vl, msg);
+	_vstprintf(msgva, msg, vl);
+	va_end(vl);
+	*/
+	//파라미터, 유니코드로 전환.
+	TCHAR func[80] = L"";
+	::mbstowcs(func, EntryPoint, strlen(EntryPoint));
+	TCHAR sm[20] = L"";
+	::mbstowcs(sm, ShaderModel, strlen(ShaderModel));
+
+
+	//셰이더 오류 메세지 읽기.
+	TCHAR errw[4096] = L"";
+	::mbstowcs(errw, (char*)pBlob->GetBufferPointer(), pBlob->GetBufferSize());
+
+
+	//HRESULT 에서 에러 메세지 얻기 
+	//시스템으로 부터 얻는 셰이더 오류메세지는 부정확하므로 생략.
+	TCHAR herr[1024] = L"아래의 오류를 확인하십시요.";
+	/*FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, 0, hr,
+	MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+	herr, 1024, NULL);
+	*/
+
+
+	//에러 메세지 붙이기.
+	TCHAR errmsg[1024];
+	_stprintf(errmsg, L"%s \nFile=%s  Entry=%s  Target=%s  \n에러코드(0x%08X) : %s \n\n%s",
+		msg, filename, func, sm,
+		hr, herr, errw);
+
+
+	//(디버깅 중) VS 출력창으로 출력..
+	OutputDebugString(L"\n");
+	OutputDebugString(errmsg);
+	//OutputDebugString(errw);
+
+
+	//로그파일로 출력.
+	//...
+
+
+	//메세지 창 출력..
+	if (bMBox)
+	{
+		MessageBox(NULL, errmsg, L"Yena::Error", MB_OK | MB_ICONERROR);
+		//MessageBox(NULL, errw, L"Yena::Error", MB_OK | MB_ICONERROR);
+	}
+}

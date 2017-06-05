@@ -1,5 +1,4 @@
 #include "Mesh.h"
-#include "..\..\Shader.h"
 
 CMesh::CMesh()
 {

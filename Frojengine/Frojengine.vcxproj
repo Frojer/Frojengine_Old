@@ -153,6 +153,7 @@
     <ClCompile Include="Frojengine\Scene\Scene.cpp" />
     <ClCompile Include="Frojengine\Scene\SceneManager.cpp" />
     <ClCompile Include="Frojengine\Shader\Material.cpp" />
+    <ClCompile Include="Frojengine\Shader\Shader.cpp" />
     <ClCompile Include="Frojengine\System\EngineSystem.cpp" />
     <ClCompile Include="Frojengine\System\FontSystem.cpp" />
     <ClCompile Include="Frojengine\System\GraphicsSystem.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="Frojengine\Scene\Scene.h" />
     <ClInclude Include="Frojengine\Scene\SceneManager.h" />
     <ClInclude Include="Frojengine\Shader\Material.h" />
+    <ClInclude Include="Frojengine\Shader\Shader.h" />
     <ClInclude Include="Frojengine\System\EngineSystem.h" />
     <ClInclude Include="Frojengine\System\FontSystem.h" />
     <ClInclude Include="Frojengine\System\GraphicsSystem.h" />

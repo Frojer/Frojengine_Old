@@ -13,55 +13,29 @@ using namespace DirectX;
 
 #pragma comment(lib, "DXGI")
 
+//DX 셰이더 운용 라이브러리.
+#include "D3DCompiler.h"				// DX 셰이더 컴파일러 헤더.
+#pragma comment(lib, "d3dcompiler")		// DX 셰이더 컴파일러 라이브러리.  D3DCompiler.dll 필요.
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// 타입 과 상수 재정의 : 버전별 호환성 향상 증대가 목적.
+// DirectX 확장 라이브러리 : DirectX Extension
+//
+// DX 확장 라이브러리 및 유틸리티 모음집.
+// 이것을 사용하려면 프로젝트/속성에 추가 설정이 필요합니다.
+// DXext/사용법.txt 을 참조. 
 //
 ///////////////////////////////////////////////////////////////////////////////
-//DX11 장치관련 재정의.											
-typedef ID3D11Device*			LPDEVICE;
-typedef ID3D11DeviceContext*	LPDXDC;
-typedef IDXGISwapChain*			LPSWAPCHAIN;
-typedef ID3D11RenderTargetView*	LPRTVIEW;
 
-
-typedef ID3D11Buffer*		LPBUFFER;
-typedef LPBUFFER			LPVERTEXBUFFER;
-typedef LPBUFFER			LPINDEXBUFFER;
-typedef ID3D11InputLayout*	LPINPUTLAYOUT;
-
-typedef ID3D11Texture2D*	LPTEXTURE2D;
-
-
-/*
-// DirectX Math 타입 재정의 : 호환성 향상
-// DX9/DX10 : DirectX SDK June.2010 이하
-typedef D3DXMATRIXA16	MATRIXA;	//행렬 : 16바이트 정렬 버전.
-typedef D3DXMATRIX		MATRIX;		//행렬 : 일반 버전.
-typedef D3DXVECTOR4		VECTOR4;
-typedef D3DXVECTOR3		VECTOR3;
-typedef D3DXVECTOR2		VECTOR2;
-*/
-// DirectX Math 타입 재정의 : 구형 소스와의 호환성 향상이 목적.
-// DX10/11 "XNAMath ver.2": DirectX SDK june.2010
-// DX11/12 "XNAMath ver.3": DirectXMath, Windows SDK 8.x 에 포함  
-// 링크 : https://msdn.microsoft.com/ko-kr/library/windows/desktop/ee418728(v=vs.85).aspx
+//< DirectX Toolkit > 
+// DX 유틸리티 및 일반화 라이브러리 모음집. 
+// DX 사용시 필요한 여러 기능 클래스 및 서비스를 제공합니다.
+// 자세한 내용을 아래를 참조하세요.
+// 라이브러리 설명 :  DXTK/ReadMe.txt
+// 참조 : https://blogs.msdn.microsoft.com/chuckw/2012/03/02/directxtk/
 //
-typedef XMMATRIX		MATRIXA;	//행렬 : 16바이트 정렬, SIMD 버전. 전역/지역 변수용. "Register Type"
-typedef XMFLOAT4X4		MATRIX;		//행렬 : 일반 버전. SIMD 미지원, Class 데이터 저장용. "Storage Type"
-typedef XMVECTOR		VECTOR;		//4성분 벡터 : 16바이트 정렬, SIMD 버전. 전역/지역 변수용. "Register Type"
-typedef XMFLOAT4		VECTOR4;	//4성분 벡터 : 일반 버전, SIMD 미지원, Class 데이터 저장용. "Storage Type"
-typedef XMFLOAT3		VECTOR3;
-typedef XMFLOAT2		VECTOR2;
+#include "DirectXTK.h"
 
-//색상 타입: 2가지.
-//typedef XMCOLOR		COLOR;		// r, g, b, a.  [정수형 0~255]
-typedef XMFLOAT4		COLOR;		// r, g, b, a.  [실수형 0~1.0]
-
-// 장치 설정 정보 구조체. (DX9/11 구형 호환성 유지용)
-typedef DXGI_MODE_DESC	  DISPLAYMODE;	//DX11 대응
-//typedef DXGI_MODE_DESC1 DISPLAYMODE;	//DX11.1 대응
-//typedef D3DDISPLAYMODE DISPLAYMODE;   //DX9 용.
 
 #endif

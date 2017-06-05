@@ -3,7 +3,6 @@
 #define _FONT_SYSTEM_
 
 #include "..\Frojengine.h"
-#include "..\DirectXTK.h"
 
 class CFontSystem
 {

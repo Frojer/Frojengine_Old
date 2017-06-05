@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "..\Frojengine.h"
+#include "..\Shader\Material.h"
 
 using namespace std;
 
@@ -31,6 +32,7 @@ public:
 	LPVERTEXBUFFER	m_pVB;
 	LPINDEXBUFFER	m_pIB;
 	LPINPUTLAYOUT	m_pInputLayout;
+	CMaterial*		m_pMaterial;
 
 public:
 	CMesh();
