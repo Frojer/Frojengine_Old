@@ -1,50 +1,53 @@
 #pragma once
 
 #include <vector>
+#include <fstream>
+#include <unordered_map>
 
 #include "..\Frojengine.h"
-#include "..\Shader\Material.h"
 
 using namespace std;
 
 struct VertexFormat
 {
-	float x, y, z;
-	float r, g, b, a;
+	VECTOR3	position;
+	VECTOR3	normal;
+	VECTOR3	texture;
+	VECTOR4	color;
 
-	VertexFormat(float _x = 0.0f, float _y = 0.0f, float _z = 0.0f, float _r = 1.0f, float _g = 1.0f, float _b = 1.0f, float _a = 1.0f)
+	VertexFormat(VECTOR3 position = { 0.0f,  0.0f, 0.0f },
+		VECTOR3 normal = { 0.0f,  0.0f, 0.0f },
+		VECTOR3 texture = { 0.0f,  0.0f, 0.0f },
+		VECTOR4 color = { 1.0f, 1.0f, 1.0f, 1.0f })
 	{
-		x = _x;
-		y = _y;
-		z = _z;
-		r = _r;
-		g = _g;
-		b = _b;
-		a = _a;
+		this->position = position;
+		this->normal = normal;
+		this->texture = texture;
+		this->color = color;
 	}
 };
 
 class CMesh
 {
-public:
-	vector<VertexFormat>	m_VF;
-	
-	LPVERTEXBUFFER	m_pVB;
-	LPINDEXBUFFER	m_pIB;
-	LPINPUTLAYOUT	m_pInputLayout;
-	CMaterial*		m_pMaterial;
+private:
+	UINT	m_Ref;
 
 public:
-	CMesh();
+	LPCWSTR					m_Name;
+
+	vector<VertexFormat>	m_Vertices;
+	vector<int>				m_Indices;
+
+public:
+	explicit CMesh();
 	CMesh(const CMesh& obj);
-	~CMesh();
+	virtual ~CMesh();
 
-	bool Create(LPDEVICE device, LPCWSTR fileName);
 	void Release();
 
-	void Draw(LPDXDC pDXDC);
+	void AddReference() { ++m_Ref; }
 
-private:
-	bool LoadMesh(LPCWSTR fileName);
-	bool CreateBuffer(LPDEVICE device);
+	void SetMeshName(LPCWSTR name) { m_Name = name; }
+	UINT GetVertexSize() { return m_Vertices.size(); }
+	UINT GetIndexSize() { return m_Indices.size(); }
 };

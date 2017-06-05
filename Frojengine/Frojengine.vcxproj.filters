@@ -87,6 +87,9 @@
     <ClCompile Include="Frojengine\Shader\Shader.cpp">
       <Filter>Frojengine\Shader\SourceFile</Filter>
     </ClCompile>
+    <ClCompile Include="Frojengine\Object\Model.cpp">
+      <Filter>Frojengine\Object\SourceFile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Frojengine\Frojengine.h">
@@ -133,6 +136,9 @@
     </ClInclude>
     <ClInclude Include="Frojengine\Shader\Shader.h">
       <Filter>Frojengine\Shader\HeaderFile</Filter>
+    </ClInclude>
+    <ClInclude Include="Frojengine\Object\Model.h">
+      <Filter>Frojengine\Object\HeaderFile</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

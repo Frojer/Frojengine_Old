@@ -21,7 +21,7 @@ public:
 	~CSceneManager();
 	
 	static bool LoadScene(LPCWSTR sceneName);
-	static bool LoadScene(int sceneNumber);
+	static bool LoadScene(UINT sceneNumber);
 
 	static void ChangeScene();
 

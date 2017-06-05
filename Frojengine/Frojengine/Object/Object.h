@@ -3,7 +3,7 @@
 #include <list>
 
 #include "..\Frojengine.h"
-#include "Mesh.h"
+#include "Model.h"
 
 using namespace std;
 
@@ -24,7 +24,7 @@ protected:
 	MATRIX m_ScaleM;
 	MATRIX m_WorldM;
 
-	CMesh*	m_pMesh;
+	CModel*	m_pModel;
 
 	CObject* m_pParent;
 	list<CObject*> m_Children;
@@ -36,7 +36,7 @@ public:
 	CObject(const CObject& obj);
 	virtual ~CObject();
 
-	virtual bool Create(void(*AddDeleteList)(CObject*), LPCWSTR name, XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale, CMesh* pMesh = nullptr, CObject* parent = nullptr);
+	virtual bool Create(void(*AddDeleteList)(CObject*), LPCWSTR name, XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale, CModel* pModel = nullptr, CObject* parent = nullptr);
 	virtual void Destroy();
 	virtual void Release();
 
@@ -49,3 +49,6 @@ public:
 	CObject* GetParent();
 	CObject* GetChild(LPCWSTR childName);
 };
+
+
+bool LoadMesh(void(*AddDeleteList)(CObject*), void(*AddSceneList)(CObject*), LPDEVICE pDevice, LPCWSTR fileName, CObject* o_pObject);

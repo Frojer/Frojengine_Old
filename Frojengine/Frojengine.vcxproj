@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClCompile Include="Frojengine\Object\Camera.cpp" />
     <ClCompile Include="Frojengine\Object\Mesh.cpp" />
+    <ClCompile Include="Frojengine\Object\Model.cpp" />
     <ClCompile Include="Frojengine\Object\Object.cpp" />
     <ClCompile Include="Frojengine\Scene\Scene.cpp" />
     <ClCompile Include="Frojengine\Scene\SceneManager.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="Frojengine\FrojengineDefine.h" />
     <ClInclude Include="Frojengine\Object\Camera.h" />
     <ClInclude Include="Frojengine\Object\Mesh.h" />
+    <ClInclude Include="Frojengine\Object\Model.h" />
     <ClInclude Include="Frojengine\Object\Object.h" />
     <ClInclude Include="Frojengine\SceneList.h" />
     <ClInclude Include="Frojengine\Scene\Scene.h" />

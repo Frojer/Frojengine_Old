@@ -22,7 +22,7 @@ CSceneManager::~CSceneManager()
 
 bool CSceneManager::LoadScene(LPCWSTR sceneName)
 {
-	for (int i = 0; i < s_Scenes.size(); i++)
+	for (UINT i = 0; i < s_Scenes.size(); i++)
 	{
 		if (wcscmp(s_Scenes[i]->m_Name, sceneName) == 0)
 		{
@@ -34,7 +34,7 @@ bool CSceneManager::LoadScene(LPCWSTR sceneName)
 	return true;
 }
 
-bool CSceneManager::LoadScene(int sceneNumber)
+bool CSceneManager::LoadScene(UINT sceneNumber)
 {
 	if (s_Scenes.size() <= sceneNumber)
 		return false;

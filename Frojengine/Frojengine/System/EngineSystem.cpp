@@ -494,3 +494,36 @@ void WindowErrorW(BOOL bMBox, TCHAR* msg, HRESULT hr, ID3DBlob* pBlob, TCHAR* fi
 		//MessageBox(NULL, errw, L"Yena::Error", MB_OK | MB_ICONERROR);
 	}
 }
+
+
+
+
+////////////////////////////////////////////////////////////////////////////// 
+//
+// 에러 메세지 처리 : 셰이더 에러 처리용.
+// 
+void WindowErrorW(BOOL bMBox, TCHAR* msg, ...)
+{
+
+	//가변매개변수 처리.
+	TCHAR errmsg[2048] = L"";
+	va_list vl;
+	va_start(vl, msg);
+	_vstprintf(errmsg, msg, vl);
+	va_end(vl);
+
+	//(디버깅 중) VS 출력창으로 출력..
+	//OutputDebugString(L"\n");
+	OutputDebugString(errmsg);
+	OutputDebugString(L"\n");
+
+	//로그파일로 출력.
+	//...
+
+	//메세지 창 출력..
+	if (bMBox)
+	{
+		MessageBox(NULL, errmsg, L"Yena::Error", MB_OK | MB_ICONERROR);
+		//MessageBox(NULL, errw, L"Yena::Error", MB_OK | MB_ICONERROR);
+	}
+}
