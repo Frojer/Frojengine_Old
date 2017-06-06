@@ -4,7 +4,7 @@
 //
 ///////////////////////
 
-#include "Object.h"
+#include "..\Frojengine.h"
 
 CObject::CObject()
 {
@@ -38,9 +38,12 @@ CObject::~CObject()
 }
 
 
-bool CObject::Create(void(*AddDeleteList)(CObject*), LPCWSTR name, XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale, CModel* pModel, CObject* parent)
+bool CObject::Create(LPDEVICE pDevice, LPCWSTR name, XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale, CModel* pModel, CObject* parent)
 {
-	this->AddDeleteList = AddDeleteList;
+	m_pDevice = pDevice;
+	m_pDevice->GetImmediateContext(&m_pDXDC);
+
+	CSceneManager::CurrentScene->AddObject(this);
 
 	m_Name = name;
 	m_Pos = pos;
@@ -56,13 +59,15 @@ bool CObject::Create(void(*AddDeleteList)(CObject*), LPCWSTR name, XMFLOAT3 pos,
 
 void CObject::Destroy()
 {
-	AddDeleteList(this);
+	CSceneManager::CurrentScene->AddDeleteList(this);
 }
 
 
 void CObject::Release()
 {
 	SetParent(nullptr);
+
+	SAFE_RELEASE(m_pModel)
 
 	list<CObject*>::iterator temp;
 	for (list<CObject*>::iterator iter = m_Children.begin(); iter != m_Children.end();)
@@ -157,7 +162,7 @@ CObject* CObject::GetChild(LPCWSTR childName)
 //
 // 메쉬/기하 정보 읽기
 //
-bool LoadMesh(void(*AddDeleteList)(CObject*), void(*AddSceneList)(CObject*), LPDEVICE pDevice, LPCWSTR fileName, CObject* o_pObject)
+bool LoadMesh(LPDEVICE pDevice, LPCWSTR fileName, CObject* o_pObject)
 {
 	wifstream file(fileName);
 
@@ -432,9 +437,9 @@ bool LoadMesh(void(*AddDeleteList)(CObject*), void(*AddSceneList)(CObject*), LPD
 		model->Create(pDevice, &meshes[0], nullptr);
 
 		CObject* obj = new CObject;
-		obj->Create(AddDeleteList, meshes[0].m_Name, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f), model);
+		obj->Create(pDevice, meshes[0].m_Name, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f), model);
 
-		AddSceneList(obj);
+		CSceneManager::CurrentScene->AddObject(obj);
 
 		o_pObject = obj;
 	}
@@ -442,9 +447,9 @@ bool LoadMesh(void(*AddDeleteList)(CObject*), void(*AddSceneList)(CObject*), LPD
 	else
 	{
 		CObject* parent = new CObject;
-		parent->Create(AddDeleteList, fileName, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f));
+		parent->Create(pDevice, fileName, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f));
 
-		AddSceneList(parent);
+		CSceneManager::CurrentScene->AddObject(parent);
 
 		for (UINT i = 0; i < meshes.size(); i++)
 		{
@@ -452,9 +457,9 @@ bool LoadMesh(void(*AddDeleteList)(CObject*), void(*AddSceneList)(CObject*), LPD
 			model->Create(pDevice, &meshes[i], nullptr);
 
 			CObject* obj = new CObject;
-			obj->Create(AddDeleteList, meshes[i].m_Name, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f), model, parent);
+			obj->Create(pDevice, meshes[i].m_Name, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f), model, parent);
 
-			AddSceneList(obj);
+			CSceneManager::CurrentScene->AddObject(obj);
 		}
 
 		o_pObject = parent;

@@ -1,5 +1,3 @@
-#include "Frojengine\Frojengine.h"
-
 #include "Frojengine\System\EngineSystem.h"
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -20,6 +18,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		engine->Release();
 		return -1;
 	}
+
+	result = engine->LoadData();
 
 	engine->Run();
 

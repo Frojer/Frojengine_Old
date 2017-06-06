@@ -1,4 +1,4 @@
-#include "Material.h"
+#include "..\Frojengine.h"
 
 CMaterial::CMaterial()
 {

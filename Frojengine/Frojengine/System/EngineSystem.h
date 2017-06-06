@@ -4,7 +4,7 @@
 
 #include "..\Frojengine.h"
 #include "GraphicsSystem.h"
-#include "..\Scene\SceneManager.h"
+//#include "..\Scene\SceneManager.h"
 
 class CEngineSystem
 {
@@ -18,6 +18,7 @@ private:
 	LPCWSTR m_WindowName;
 
 	CGraphicsSystem* m_pGraphics;
+	CSceneManager m_SceneManager;
 
 	float m_deltaTime;
 
@@ -31,6 +32,8 @@ public:
 
 	bool Create(LPCWSTR className, LPCWSTR windowName, int width, int height);
 	void Release();
+
+	bool LoadData();
 
 	void Run();
 

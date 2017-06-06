@@ -2,9 +2,6 @@
 
 #include <list>
 
-#include "..\Frojengine.h"
-#include "Model.h"
-
 using namespace std;
 
 class CObject
@@ -29,17 +26,22 @@ protected:
 	CObject* m_pParent;
 	list<CObject*> m_Children;
 
-	void (*AddDeleteList)(CObject*);
+protected:
+	LPDEVICE m_pDevice;
+	LPDXDC m_pDXDC;
 
 public:
 	explicit CObject();
 	CObject(const CObject& obj);
 	virtual ~CObject();
 
-	virtual bool Create(void(*AddDeleteList)(CObject*), LPCWSTR name, XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale, CModel* pModel = nullptr, CObject* parent = nullptr);
+	virtual bool Create(LPDEVICE pDevice, LPCWSTR name, XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale, CModel* pModel = nullptr, CObject* parent = nullptr);
 	virtual void Destroy();
+
+protected:
 	virtual void Release();
 
+public:
 	virtual void Update(float deltaTime);
 	virtual void Render();
 
@@ -48,7 +50,8 @@ public:
 
 	CObject* GetParent();
 	CObject* GetChild(LPCWSTR childName);
+
+	friend void CScene::ReleaseObjs();
 };
 
-
-bool LoadMesh(void(*AddDeleteList)(CObject*), void(*AddSceneList)(CObject*), LPDEVICE pDevice, LPCWSTR fileName, CObject* o_pObject);
+bool LoadMesh(LPDEVICE pDevice, LPCWSTR fileName, CObject* o_pObject);

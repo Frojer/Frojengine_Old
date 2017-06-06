@@ -1,4 +1,4 @@
-#include "Model.h"
+#include "..\Frojengine.h"
 
 CModel::CModel()
 {
@@ -34,8 +34,12 @@ bool CModel::Create(LPDEVICE pDevice, CMesh* pMesh, CMaterial* pMaterial)
 	// 모델 객체 생성
 	//---------------------
 
-	// 기하도형 / 메쉬 로드.  
+	// 기하도형 / 메쉬 로드.
 	m_pMesh = pMesh;
+	if (pMesh != nullptr)
+	{
+		pMesh->AddReference();
+	}
 
 	// 버퍼 생성
 	result = CreateBuffer();
@@ -62,7 +66,9 @@ bool CModel::Create(LPDEVICE pDevice, CMesh* pMesh, CMaterial* pMaterial)
 
 void CModel::Release()
 {
+	SAFE_RELEASE(m_pMesh);
 	SAFE_RELEASE(m_pMaterial);
+	SAFE_RELEASE(m_pIB);
 	SAFE_RELEASE(m_pVB);
 	SAFE_RELEASE(m_pInputLayout);
 }
@@ -252,4 +258,14 @@ void CModel::Draw()
 
 	// 렌더링 옵션 복구 : 타 모델/유닛 렌더링을 위한 장치 설정 리셋(옵션)
 	// ... 
+}
+
+
+
+void CModel::ChangeMesh(CMesh* pMesh)
+{
+	SAFE_RELEASE(m_pMesh);
+
+	m_pMesh = pMesh;
+	m_pMesh->AddReference();
 }

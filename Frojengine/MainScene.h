@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Frojengine\Scene\Scene.h"
+#include "Frojengine\Frojengine.h"
 #include "Hero.h"
 
 class MainScene : public CScene
@@ -8,6 +8,6 @@ class MainScene : public CScene
 public:
 	Hero* m_pHero;
 public:
-	virtual bool Load();
+	virtual bool Load(LPDEVICE pDevice);
 	virtual void Release();
 };

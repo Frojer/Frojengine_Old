@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Frojengine\Object\Object.h"
+#include "Frojengine\Frojengine.h"
 
 class Hero : public CObject
 {

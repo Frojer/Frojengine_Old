@@ -1,4 +1,4 @@
-#include "Scene.h"
+#include "..\Frojengine.h"
 
 CScene::CScene()
 {
@@ -37,9 +37,9 @@ void CScene::Render()
 }
 
 
-void CScene::AddObject(CObject& obj)
+void CScene::AddObject(CObject* obj)
 {
-	m_Objs.push_back(&obj);
+	m_Objs.push_back(obj);
 }
 
 

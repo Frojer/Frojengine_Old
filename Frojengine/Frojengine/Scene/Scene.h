@@ -1,9 +1,10 @@
 #pragma once
 
 #include <list>
-#include "..\Object\Object.h"
 
 using namespace std;
+
+class CObject;
 
 class CScene	
 {
@@ -19,15 +20,13 @@ public:
 	CScene(const CScene& obj);
 	~CScene();
 
-	virtual bool Load() = 0;
+	virtual bool Load(LPDEVICE pDevice) = 0;
 	virtual void Release() = 0;
 
 	void Update(float deltaTime);
 	void Render();
 
-	void AddObject(CObject& obj);
+	void AddObject(CObject* obj);
 	void AddDeleteList(CObject* pObj);
-
-protected:
 	void ReleaseObjs();
 };

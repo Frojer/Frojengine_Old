@@ -67,6 +67,16 @@ void CEngineSystem::Release()
 }
 
 
+
+bool CEngineSystem::LoadData()
+{
+
+
+	return true;
+}
+
+
+
 void CEngineSystem::Run()
 {
 	while (!m_bEnd)
@@ -257,6 +267,8 @@ void CEngineSystem::Update()
 	
 	GetEngineTime();
 
+	CMesh::CheckDeleteList();
+	CSceneManager::CurrentScene->Update(m_deltaTime);
 
 
 
@@ -333,7 +345,7 @@ void ShowInfo(HWND g_hWnd)
 
 void CEngineSystem::Render()
 {
-
+	CSceneManager::CurrentScene->Render();
 
 	//-------------------------------
 	//  장면 그리기 시작.. 

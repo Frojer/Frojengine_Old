@@ -1,10 +1,15 @@
 #include "MainScene.h"
 
-bool MainScene::Load()
+bool MainScene::Load(LPDEVICE pDevice)
 {
-	m_pHero = new Hero;
-
-	/*m_pHero->Create(AddDeleteList, L"Hero", VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f));*/
+	LoadMesh(pDevice, L"", m_pHero);
 
 	return true;
+}
+
+
+
+void MainScene::Release()
+{
+	m_pHero->Destroy();
 }

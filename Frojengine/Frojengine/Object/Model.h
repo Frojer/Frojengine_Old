@@ -1,9 +1,5 @@
 #pragma once
 
-#include "..\Frojengine.h"
-#include "Mesh.h"
-#include "..\Shader\Material.h"
-
 using namespace std;
 
 class CModel
@@ -41,4 +37,6 @@ public:
 	virtual void Draw();
 
 	virtual void UpdateCB(MATRIXA* mTM);
+
+	void ChangeMesh(CMesh* pMesh);
 };

@@ -1,4 +1,4 @@
-#include "SceneManager.h"
+#include "..\Frojengine.h"
 
 CScene* CSceneManager::CurrentScene = nullptr;
 
@@ -22,7 +22,7 @@ CSceneManager::~CSceneManager()
 
 void CSceneManager::Release()
 {
-	for (int i = 0; i < m_Scenes.size(); i++)
+	for (UINT i = 0; i < m_Scenes.size(); i++)
 	{
 		m_Scenes[i]->Release();
 		delete m_Scenes[i];
@@ -58,7 +58,7 @@ bool CSceneManager::LoadScene(UINT sceneNumber)
 	return true;
 }
 
-void CSceneManager::ChangeScene()
+void CSceneManager::ChangeScene(LPDEVICE pDevice)
 {
 	if (m_bLoading || m_ChangeScene == nullptr)
 		return;
@@ -67,7 +67,7 @@ void CSceneManager::ChangeScene()
 	CSceneManager::m_ChangeScene = nullptr;
 	m_bLoading = false;
 
-	CSceneManager::CurrentScene->Load();
+	CSceneManager::CurrentScene->Load(pDevice);
 }
 
 void CSceneManager::AddScene(CScene* scene)

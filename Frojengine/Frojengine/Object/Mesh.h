@@ -4,8 +4,6 @@
 #include <fstream>
 #include <unordered_map>
 
-#include "..\Frojengine.h"
-
 using namespace std;
 
 struct VertexFormat
@@ -32,6 +30,7 @@ class CMesh
 private:
 	UINT	m_Ref;
 
+	static list<CMesh*> deleteList;
 public:
 	LPCWSTR					m_Name;
 
@@ -50,4 +49,6 @@ public:
 	void SetMeshName(LPCWSTR name) { m_Name = name; }
 	UINT GetVertexSize() { return m_Vertices.size(); }
 	UINT GetIndexSize() { return m_Indices.size(); }
+
+	static void CheckDeleteList();
 };

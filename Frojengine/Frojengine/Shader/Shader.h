@@ -2,8 +2,6 @@
 #ifndef _SHADER_H_
 #define _SHADER_H_
 
-#include "..\Frojengine.h"
-
 class CShader
 {
 protected:

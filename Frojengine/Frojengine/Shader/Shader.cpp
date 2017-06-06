@@ -1,4 +1,4 @@
-#include "Shader.h"
+#include "..\Frojengine.h"
 
 CShader::CShader()
 {

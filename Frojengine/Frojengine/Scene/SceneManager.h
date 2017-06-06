@@ -2,8 +2,6 @@
 
 #include <vector>
 
-#include "Scene.h"
-
 using namespace std;
 
 class CSceneManager
@@ -27,7 +25,7 @@ public:
 	bool LoadScene(LPCWSTR sceneName);
 	bool LoadScene(UINT sceneNumber);
 
-	void ChangeScene();
+	void ChangeScene(LPDEVICE pDevice);
 
 	void AddScene(CScene* scene);
 };
