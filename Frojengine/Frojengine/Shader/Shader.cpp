@@ -37,10 +37,10 @@ bool CShader::Create(LPDEVICE pDevice, LPCWSTR fileName)
 	//LoadLayout();
 
 	// 상수 데이터 초기화
-	ZeroMemory(&m_CBuffer, sizeof(ConstBufferData));
+	ZeroMemory(&m_CBuffer, sizeof(CB_WVP));
 
 	// 상수 버퍼 생성
-	CreateDynamicConstantBuffer(sizeof(ConstBufferData), &m_CBuffer, &m_pCB);
+	CreateDynamicConstantBuffer(sizeof(CB_WVP), &m_CBuffer, &m_pCB);
 
 
 
@@ -105,7 +105,7 @@ void CShader::Apply()
 }
 
 
-void CShader::UpdateCB(MATRIXA* pTM)
+void CShader::UpdateCB(MATRIXA* pWorld)
 {
 	// 외부 지정 행렬로 상수버퍼 갱신. 
 	
@@ -113,11 +113,11 @@ void CShader::UpdateCB(MATRIXA* pTM)
 	//-----------------------
 	// 상수버퍼 갱신
 	//-----------------------
-	XMStoreFloat4x4(&m_CBuffer.mTM, *pTM);	
+	XMStoreFloat4x4(&m_CBuffer.mWorld, *pWorld);
 	//m_CBuffer.mTM = XMMatrixTranspose(mTM);	//셰이더에서 '열 우선 Column major' 기준으로 처리하면 속도 향상을 기대할 수 있습니다. 이를 위한 행렬 전치 처리.	
 
 	//셰이더 상수 버퍼 갱신.(동적버퍼)
-	UpdateDynamicConstantBuffer(m_pCB, &m_CBuffer, sizeof(ConstBufferData));
+	UpdateDynamicConstantBuffer(m_pCB, &m_CBuffer, sizeof(CB_WVP));
 	//셰이더 상수 버퍼 갱신.(정적버퍼)
 	//m_pDXDC->UpdateSubresource(m_pCB, 0, nullptr, &m_CBuffer, 0, 0);
 }

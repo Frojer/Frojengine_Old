@@ -1,4 +1,5 @@
 #include "EngineSystem.h"
+#include "..\..\MainScene.h"
 
 bool CEngineSystem::m_bEnd = true;
 
@@ -70,7 +71,13 @@ void CEngineSystem::Release()
 
 bool CEngineSystem::LoadData()
 {
+	MainScene* mainScene = new MainScene;
 
+	mainScene->Create(m_pGraphics->GetDevice(), L"MainScene");
+
+	m_SceneManager.AddScene(mainScene);
+
+	m_SceneManager.LoadScene(L"MainScene");
 
 	return true;
 }
@@ -268,9 +275,8 @@ void CEngineSystem::Update()
 	GetEngineTime();
 
 	CMesh::CheckDeleteList();
-	CSceneManager::CurrentScene->Update(m_deltaTime);
 
-
+	m_SceneManager.ChangeScene();
 
 	// 장면 갱신 
 	//
@@ -279,74 +285,12 @@ void CEngineSystem::Update()
 
 	// 게임 로직, 이벤트, 층돌, 점수계산..
 	// ...	 
+	CSceneManager::CurrentScene->Update(m_deltaTime);
 }
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-void PutFPS(int x, int y, HWND g_hWnd)
-{
-	static int frm = 0;
-	static UINT oldtime = GetTickCount();
-	static UINT frmcnt = 0;
-	static float  fps = 0.0f;
-	//static float evfps = 0;		//평균 프레임.
-	UINT nowtime = GetTickCount();
-	++frmcnt;
-
-	TCHAR msg[80];
-	int time = nowtime - oldtime;
-	if (time >= 999) // 0~999 밀리세컨드.. 1~1000이 아님
-	{
-		oldtime = nowtime;
-
-		//1초간 증가된 프레임 수를 구합니다..
-		frm = frmcnt;	frmcnt = 0;
-
-		//초당 프래임 수를 계산합니다.
-		fps = (float)(frm * 1000) / (float)time;
-	}
-
-	//sprintf(msg, "fps=%.1f/%d      ", fps, time); 
-	_stprintf(msg, L"fps=%d/%d      ", frm, time);
-
-	HDC hdc = GetDC(g_hWnd);
-	TextOut(hdc, x, y, msg, (int)_tcslen(msg));
-	ReleaseDC(g_hWnd, hdc);
-}
-
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////// 
-//
-//  도움말. 
-//
-void ShowInfo(HWND g_hWnd)
-{
-	int x = 100;
-	int y = 100;
-	HDC hdc = GetDC(g_hWnd);
-	TCHAR* msg = L"DX 를 사용하기 위한 3D 렌더링 기본 프레임워크 입니다.";
-	TextOut(hdc, x, y += 20, msg, (int)_tcslen(msg));
-	msg = L"기본 프레임워크를 기반으로 단계별로 튜토리얼을 진행할 것입니다.";
-	TextOut(hdc, x, y += 20, msg, (int)_tcslen(msg));
-	y += 20;
-	msg = L"Idle Time 에 맞추어 출력중으로 메세지가 깜빡거립니다.";
-	TextOut(hdc, x, y += 20, msg, (int)_tcslen(msg));
-
-	ReleaseDC(g_hWnd, hdc);
-
-}
-
 
 
 void CEngineSystem::Render()
 {
-	CSceneManager::CurrentScene->Render();
-
 	//-------------------------------
 	//  장면 그리기 시작.. 
 	//-------------------------------
@@ -356,14 +300,7 @@ void CEngineSystem::Render()
 
 	//개체 렌더링 : 주인공, 몬스터, 지형.. 
 	//...
-
-
-	//도움말 및 기타 렌더링 정보 출력.
-	//프레임수 표시.
-	PutFPS(1, 1, m_hWnd);
-
-	//도움말 출력.
-	ShowInfo(m_hWnd);
+	CSceneManager::CurrentScene->Render();
 
 
 	//-------------------------------

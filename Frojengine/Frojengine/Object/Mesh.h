@@ -10,12 +10,12 @@ struct VertexFormat
 {
 	VECTOR3	position;
 	VECTOR3	normal;
-	VECTOR3	texture;
+	VECTOR2	texture;
 	VECTOR4	color;
 
 	VertexFormat(VECTOR3 position = { 0.0f,  0.0f, 0.0f },
 		VECTOR3 normal = { 0.0f,  0.0f, 0.0f },
-		VECTOR3 texture = { 0.0f,  0.0f, 0.0f },
+		VECTOR2 texture = { 0.0f,  0.0f },
 		VECTOR4 color = { 1.0f, 1.0f, 1.0f, 1.0f })
 	{
 		this->position = position;

@@ -154,14 +154,24 @@ bool CModel::LoadLayout()
 	// 이번 데모에서는 일반 함수형태로 단순하게 관리하도록 하겠습니다.
 	// ... 
 
-	//-------------------------
-	// 정점 입력구조 생성 
-	//-------------------------
+	// 정점 입력구조 Input layout
+	// GPU 에 공급될 기하데이터 - 개별 정점의 데이터 구조와 용도등의 정보를 구성합니다.
+	// 구형 Vertex Format(DX7/8/9) 또는 Vertex Declaration(DX9) 과 동일 목적으로 사용되지만 
+	// 신형 렌더링 기술의 요구에 맞추어 구조적 및 기능적으로 확장되었습니다.
+	//
+	// 바른 렌더링 결과를 위해서는 아래의 조건이 동일 또는 호환되어야 합니다.
+	// 1.정점 버퍼의 데이터.  Vertex Buffer Data
+	// 2.정점 구조 Vertex Format (Input Layout)
+	// 3.셰이더 함수의 입력구조.  Vertex Shader (Input Layout)
+	//
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		//  Sementic          format                       offset         classification             
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		//{ "COLOR",    0, DXGI_FORMAT_R8G8B8A8_UNORM,     0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }, 	//DWORD 형 색상		
+		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
 	UINT numElements = ARRAYSIZE(layout);
@@ -268,4 +278,17 @@ void CModel::ChangeMesh(CMesh* pMesh)
 
 	m_pMesh = pMesh;
 	m_pMesh->AddReference();
+}
+
+
+
+void CModel::ChangeMaterial(CMaterial* pMaterial)
+{
+	if (m_pMaterial != nullptr)
+	{
+		m_pMaterial->Release();
+		delete m_pMaterial;
+	}
+
+	m_pMaterial = pMaterial;
 }

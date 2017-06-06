@@ -132,6 +132,7 @@ void CObject::SetParent(CObject* parent)
 	}
 
 	m_pParent = parent;
+	m_pParent->AddChild(this);
 }
 
 void CObject::AddChild(CObject* child)
@@ -158,6 +159,14 @@ CObject* CObject::GetChild(LPCWSTR childName)
 }
 
 
+
+void CObject::SetMaterial(CMaterial* pMat)
+{
+	m_pModel->ChangeMaterial(pMat);
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////// 
 //
 // 메쉬/기하 정보 읽기
@@ -166,9 +175,10 @@ bool LoadMesh(LPDEVICE pDevice, LPCWSTR fileName, CObject* o_pObject)
 {
 	wifstream file(fileName);
 
-	vector<CMesh> meshes;
+	vector<CMesh*> meshes;
 	vector<XMFLOAT3> vecPos;		// obj 파일의 Position 정보들이 저장되는 vector
-	vector<XMFLOAT3> vecTex;		// obj 파일의 Texture 정보들이 저장되는 vector
+	//vector<XMFLOAT3> vecTex;		// obj 파일의 Texture 정보들이 저장되는 vector
+	vector<XMFLOAT2> vecTex;		// obj 파일의 Texture 정보들이 저장되는 vector
 	vector<XMFLOAT3> vecNor;		// obj 파일의 Normal 정보들이 저장되는 vector
 	unordered_map<wstring, int> indexHash;		// 중복되는 index들을 걸러내기 위해 해쉬테이블을 사용
 	unordered_map<wstring, int> groupHash;		// 그룹들을 구분하기위해 해쉬테이블을 사용
@@ -187,6 +197,7 @@ bool LoadMesh(LPDEVICE pDevice, LPCWSTR fileName, CObject* o_pObject)
 	while (!file.eof())
 	{
 		XMFLOAT3 tempFloat3;
+		XMFLOAT2 tempFloat2;		// 텍스쳐를 float2 로 바꿈
 		VertexFormat tempVF;
 		int tempFaceNum = 0;
 
@@ -201,7 +212,9 @@ bool LoadMesh(LPDEVICE pDevice, LPCWSTR fileName, CObject* o_pObject)
 			// 한글자를 더 읽어서
 			file.get(c);
 			if (c == ' ') { file >> tempFloat3.x >> tempFloat3.y >> tempFloat3.z; vecPos.push_back(tempFloat3); }		// 공백이 나오면 position값이므로 vecPos에 값을 넣고
-			else if (c == 't') { file >> tempFloat3.x >> tempFloat3.y >> tempFloat3.z; vecTex.push_back(tempFloat3); }		// 't'가 나오면 Texture값이므로 vecTex에 값을 넣고
+			//else if (c == 't') { file >> tempFloat3.x >> tempFloat3.y >> tempFloat3.z; vecTex.push_back(tempFloat3); }		// 't'가 나오면 Texture값이므로 vecTex에 값을 넣고
+			else if (c == 't')
+			{ file >> tempFloat2.x >> tempFloat2.y; vecTex.push_back(tempFloat2); }		// 't'가 나오면 Texture값이므로 vecTex에 값을 넣고
 			else if (c == 'n') { file >> tempFloat3.x >> tempFloat3.y >> tempFloat3.z; vecNor.push_back(tempFloat3); }		// 'n'이 나오면 Normal값이므로 vecNor에 값을 넣는다
 
 			while (c != '\n')
@@ -233,9 +246,9 @@ bool LoadMesh(LPDEVICE pDevice, LPCWSTR fileName, CObject* o_pObject)
 					if (groupHash.find(groupName) == groupHash.end())
 					{
 						groupHash.insert(unordered_map<wstring, int>::value_type(groupName, groupNum++));
-
-						CMesh mesh;
-						mesh.SetMeshName(groupName.c_str());
+						
+						CMesh* mesh = new CMesh;
+						mesh->SetMeshName(groupName.c_str());
 						meshes.push_back(mesh);
 					}
 
@@ -274,8 +287,8 @@ bool LoadMesh(LPDEVICE pDevice, LPCWSTR fileName, CObject* o_pObject)
 					{
 						groupHash.insert(unordered_map<wstring, int>::value_type(groupName, groupNum++));
 
-						CMesh mesh;
-						mesh.SetMeshName(groupName.c_str());
+						CMesh* mesh = new CMesh;
+						mesh->SetMeshName(groupName.c_str());
 						meshes.push_back(mesh);
 					}
 
@@ -287,15 +300,15 @@ bool LoadMesh(LPDEVICE pDevice, LPCWSTR fileName, CObject* o_pObject)
 		// face(Index)에 대한 정보라면
 		else if (c == 'f')
 		{
-#define GROUP_MESH_VERTICES meshes[groupHash[groupName]].m_Vertices
-#define GROUP_MESH_INDICES meshes[groupHash[groupName]].m_Indices
+#define GROUP_MESH_VERTICES meshes[groupHash[groupName]]->m_Vertices
+#define GROUP_MESH_INDICES meshes[groupHash[groupName]]->m_Indices
 			if (groupHash.size() == 0)
 			{
 				groupName = L"default";
 				groupHash.insert(unordered_map<wstring, int>::value_type(L"default", groupNum++));
 
-				CMesh mesh;
-				mesh.SetMeshName(groupName.c_str());
+				CMesh* mesh = new CMesh;
+				mesh->SetMeshName(groupName.c_str());
 				meshes.push_back(mesh);
 			}
 
@@ -434,10 +447,10 @@ bool LoadMesh(LPDEVICE pDevice, LPCWSTR fileName, CObject* o_pObject)
 	else if (meshes.size() == 1)
 	{
 		CModel* model = new CModel;
-		model->Create(pDevice, &meshes[0], nullptr);
+		model->Create(pDevice, meshes[0], nullptr);
 
 		CObject* obj = new CObject;
-		obj->Create(pDevice, meshes[0].m_Name, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f), model);
+		obj->Create(pDevice, meshes[0]->m_Name, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f), model);
 
 		CSceneManager::CurrentScene->AddObject(obj);
 
@@ -454,10 +467,10 @@ bool LoadMesh(LPDEVICE pDevice, LPCWSTR fileName, CObject* o_pObject)
 		for (UINT i = 0; i < meshes.size(); i++)
 		{
 			CModel* model = new CModel;
-			model->Create(pDevice, &meshes[i], nullptr);
+			model->Create(pDevice, meshes[i], nullptr);
 
 			CObject* obj = new CObject;
-			obj->Create(pDevice, meshes[i].m_Name, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f), model, parent);
+			obj->Create(pDevice, meshes[i]->m_Name, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f), model, parent);
 
 			CSceneManager::CurrentScene->AddObject(obj);
 		}

@@ -58,16 +58,18 @@ bool CSceneManager::LoadScene(UINT sceneNumber)
 	return true;
 }
 
-void CSceneManager::ChangeScene(LPDEVICE pDevice)
+void CSceneManager::ChangeScene()
 {
 	if (m_bLoading || m_ChangeScene == nullptr)
 		return;
+
+	SAFE_RELEASE(CSceneManager::CurrentScene);
 
 	CSceneManager::CurrentScene = CSceneManager::m_ChangeScene;
 	CSceneManager::m_ChangeScene = nullptr;
 	m_bLoading = false;
 
-	CSceneManager::CurrentScene->Load(pDevice);
+	CSceneManager::CurrentScene->Load();
 }
 
 void CSceneManager::AddScene(CScene* scene)

@@ -52,6 +52,8 @@ public:
 
 	void SetVSync(bool bVSync);
 	bool GetVSync();
+
+	LPDEVICE GetDevice() { return m_pDevice; }
 };
 
 #endif

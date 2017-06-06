@@ -4,6 +4,8 @@
 
 using namespace std;
 
+class CScene;
+
 class CSceneManager
 {
 private:
@@ -25,7 +27,7 @@ public:
 	bool LoadScene(LPCWSTR sceneName);
 	bool LoadScene(UINT sceneNumber);
 
-	void ChangeScene(LPDEVICE pDevice);
+	void ChangeScene();
 
 	void AddScene(CScene* scene);
 };

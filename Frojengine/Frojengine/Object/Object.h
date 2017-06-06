@@ -51,6 +51,11 @@ public:
 	CObject* GetParent();
 	CObject* GetChild(LPCWSTR childName);
 
+	void SetModel(CModel* pModel) { SAFE_RELEASE(m_pModel); m_pModel = pModel; }
+	CModel* GetModel() { return m_pModel; }
+
+	void SetMaterial(CMaterial* pMat);
+
 	friend void CScene::ReleaseObjs();
 };
 

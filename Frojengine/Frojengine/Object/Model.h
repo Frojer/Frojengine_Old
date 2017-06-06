@@ -38,5 +38,8 @@ public:
 
 	virtual void UpdateCB(MATRIXA* mTM);
 
+	CMesh* GetMesh() { return m_pMesh; }
 	void ChangeMesh(CMesh* pMesh);
+
+	void ChangeMaterial(CMaterial* pMaterial);
 };

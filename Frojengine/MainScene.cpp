@@ -1,15 +1,133 @@
 #include "MainScene.h"
 
-bool MainScene::Load(LPDEVICE pDevice)
+bool MainScene::Load()
 {
-	LoadMesh(pDevice, L"", m_pHero);
+	bool result;
+
+	CShader* pShader = new CShader;
+	pShader->Create(m_pDevice, L"fx/Demo.fx");
+
+	CMaterial* pMat = new CMaterial;
+	pMat->Create(VECTOR4(1.0f, 1.0f, 1.0f, 1.0f), VECTOR4(0.2f, 0.2f, 0.2f, 0.2f), VECTOR4(0.0f, 0.0f, 0.0f, 0.0f), 1.0f, pShader);
+
+
+	m_pCamera = new CCamera;
+
+	D3D11_VIEWPORT vp;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	vp.Width = 800;
+	vp.Height = 600;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+
+	m_pCamera->Create(m_pDevice, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), 45, 1, 1000, 800, 600, vp);
+
+	result = LoadMesh(m_pDevice, L"Resource/Bastion_Final.obj", m_pHero);
+
+	
+
+	if (!result)
+	{
+		return false;
+	}
+
+	m_pFont = new CFontSystem;
+
+	result = m_pFont->Create(m_pDevice, L"../Font/굴림9k.sfont");
+
+	if (!result)
+	{
+		return false;
+	}
 
 	return true;
 }
 
 
 
-void MainScene::Release()
+void MainScene::SceneRender()
 {
-	m_pHero->Destroy();
+	//도움말 및 기타 렌더링 정보 출력.
+	//프레임수 표시.
+	PutFPS(0, 0);
+
+	//도움말 출력.
+	ShowInfo();
+}
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+void MainScene::PutFPS(int x, int y)
+{
+	static int oldtime = GetTickCount();
+	int nowtime = GetTickCount();
+
+	static int frmcnt = 0;
+	static float fps = 0.0f;
+
+	++frmcnt;
+
+	int time = nowtime - oldtime;
+	if (time >= 999)
+	{
+		oldtime = nowtime;
+
+		fps = (float)frmcnt * 1000 / (float)time;
+		frmcnt = 0;
+	}
+
+	//char msg[40];
+	//sprintf(msg,"FPS:%.1f/%d", fps, frmcnt );
+	//g_pFont->TextDraw(NULL, msg, -1, NULL, DT_NOCLIP, COLOR(0, 1, 0, 1));
+	m_pFont->TextDraw(x, y, COLOR(0, 1, 0, 1), L"FPS:%.1f/%d", fps, frmcnt);
+}
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////// 
+//
+//  도움말. 
+//
+void MainScene::ShowInfo()
+{
+	static bool bShow = true;
+	if (IsKeyUp(VK_F1)) bShow ^= true;
+
+	if (!bShow)
+	{
+		//ynTextDraw(1,20, COLOR(1, 1, 0, 1), "[Help] F1"); 
+		return;
+	}
+
+
+	// Today's Topic.
+	{
+		int x = 300, y = 50;
+		COLOR col(1, 1, 1, 1);
+		COLOR col2(1, 1, 0, 1);
+		m_pFont->TextDraw(x, y, col, L"■ %s", L"Frojengine");
+
+		y += 24;
+		WCHAR* msg =
+			L"1.기본프레임워크 구축.\n"
+			L"2.HW 렌더링 디바이스(DX11 Device) 를 생성.\n"
+			L"3.Idle 시간 렌더링.\n"
+			L"4.스왑체인 Swap(Flipping) chain 의 이해 \n";
+		//L"5.전체화면 또는 창모드 전환 (Alt-Enter) \n"
+		//L"6.수직동기화(VSync): 티어링(Tearing), 셔터링(Shuttering) 방지";
+		m_pFont->TextDraw(x, y, col, msg);
+	}
+
+
+	int x = 300, y = 300;
+	static int cnt = 0;
+	COLOR col(1, 1, 0, 1);
+	m_pFont->TextDraw(x, y, col, L"Hello, Device!!    cnt=%08d", ++cnt);
 }

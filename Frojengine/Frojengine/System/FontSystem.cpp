@@ -28,9 +28,10 @@ bool CFontSystem::Create(LPDEVICE pDevice, LPCWSTR fontFileName)
 	m_pFontBatch = new SpriteBatch(pDXDC);
 
 	//DirectX Toolkit : Sprite Font 객체 생성.
-	TCHAR* filename = L"../Font/굴림9k.sfont";	//ASCII 0 ~ 255 + 특수문자'■' + Unicode 한글 완성형 총 11,440 글자, 크기:9		
+	//TCHAR* filename = L"../Font/굴림9k.sfont";	//ASCII 0 ~ 255 + 특수문자'■' + Unicode 한글 완성형 총 11,440 글자, 크기:9		
+	
 	try {
-		m_pFont = new SpriteFont(pDevice, filename);
+		m_pFont = new SpriteFont(pDevice, fontFileName);
 		m_pFont->SetLineSpacing(14.0f);				//폰트9 기준, 줄간격 설정. '다중라인 출력시 흐려짐 방지용'
 		m_pFont->SetDefaultCharacter('_');			//출력 글자값 미검색시 대신 출력할 키값.
 	}
@@ -39,7 +40,7 @@ bool CFontSystem::Create(LPDEVICE pDevice, LPCWSTR fontFileName)
 		//ynError(0, L"폰트 생성 실패 : File=%s", filename);
 		TCHAR msg[1024] = L"";
 		::mbstowcs(msg, e.what(), strlen(e.what()));
-		WindowError(0, L"폰트 생성 실패 : %s \n File=%s", msg, filename);
+		WindowError(0, L"폰트 생성 실패 : %s \n File=%s", msg, fontFileName);
 
 		SAFE_RELEASE(pDXDC);
 

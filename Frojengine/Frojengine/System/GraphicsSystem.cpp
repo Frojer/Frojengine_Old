@@ -7,6 +7,8 @@ CGraphicsSystem::CGraphicsSystem()
 	m_pSwapChain = nullptr;
 	m_pRTView = nullptr;
 
+	m_BackColor = VECTOR4(0, 0.125f, 0.3f, 1);
+
 	ZeroMemory(&m_Mode, sizeof(m_Mode));
 }
 
@@ -107,7 +109,7 @@ bool CGraphicsSystem::CreateDX(HWND hWnd)
 	);
 
 	// ºäÆ÷Æ® ¼³Á¤
-	SetViewPort();
+	//SetViewPort();
 
 
 	//----------------------------------------
@@ -227,8 +229,7 @@ bool CGraphicsSystem::CreateRenderTarget()
 		return false;
 
 	//È¹µæÇÑ ¹é¹öÆÛ¿¡ ·»´õÅ¸°Ù ºä »ý¼º.(·»´õÅ¸°Ù'Çü'À¸·Î ¼³Á¤ÇÔ)
-	ID3D11RenderTargetView* pRTView;
-	hr = m_pDevice->CreateRenderTargetView(pBackBuffer, NULL, &pRTView);		// '·»´õÅ¸°Ùºä'¸¦ »ý¼º.
+	hr = m_pDevice->CreateRenderTargetView(pBackBuffer, NULL, &m_pRTView);		// '·»´õÅ¸°Ùºä'¸¦ »ý¼º.
 
 	if (FAILED(hr))
 	{

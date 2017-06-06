@@ -15,9 +15,9 @@ protected:
 
 	// 상수 버퍼용 구조체 : 셰이더 내부 연산에 사용될 데이터들. 
 	// GPU 로 데이터를 전송할 사용자 데이터를 정의합니다.  
-	struct ConstBufferData
+	struct CB_WVP
 	{
-		XMFLOAT4X4 mTM;			//"World" 변환 행렬 변수 : DirectXMath, 비정렬, SIMD 비가속, 일반 저장용.
+		XMFLOAT4X4 mWorld;			//"World" 변환 행렬 변수 : DirectXMath, 비정렬, SIMD 비가속, 일반 저장용.
 		XMFLOAT4X4 mView;		//"View" 변환 행렬 변수 
 		XMFLOAT4X4 mProj;		//"Projection" 변환 행렬 변수
 
@@ -25,7 +25,7 @@ protected:
 
 	//셰이더 공급용 상수데이터. 
 	//각 유닛별 데이터를 셰이더로 전달함.
-	ConstBufferData m_CBuffer;
+	CB_WVP m_CBuffer;
 
 protected:
 	bool LoadShader(LPCWSTR fileName);
@@ -51,13 +51,13 @@ public:
 	virtual void Update();
 	virtual void Apply();
 
-	virtual void UpdateCB(MATRIXA* pTM);
+	virtual void UpdateCB(MATRIXA* pWorld);
 
 	// 멤버 접근자.
 	LPVSCODE  GetVSCode() { return m_pVSCode; }
 	LPVOID	  GetBufferPointer() { return m_pVSCode->GetBufferPointer(); }
 	UINT	  GetBufferSize() { return m_pVSCode->GetBufferSize(); }
-	ConstBufferData* GetCBuffer() { return &m_CBuffer; }
+	CB_WVP* GetCBuffer() { return &m_CBuffer; }
 };
 
 #endif
