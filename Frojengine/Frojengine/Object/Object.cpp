@@ -111,9 +111,9 @@ void CObject::Update(float deltaTime)
 
 
 
-void CObject::Render(LPDXDC pDXDC)
+void CObject::Render()
 {
-
+	m_pModel->Draw();
 }
 
 

@@ -41,7 +41,7 @@ public:
 	virtual void Release();
 
 	virtual void Update(float deltaTime);
-	virtual void Render(LPDXDC pDXDC);
+	virtual void Render();
 
 	void SetParent(CObject* parent);
 	void AddChild(CObject* child);

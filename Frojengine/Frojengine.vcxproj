@@ -158,7 +158,9 @@
     <ClCompile Include="Frojengine\System\EngineSystem.cpp" />
     <ClCompile Include="Frojengine\System\FontSystem.cpp" />
     <ClCompile Include="Frojengine\System\GraphicsSystem.cpp" />
+    <ClCompile Include="Hero.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Frojengine\DirectX.h" />
@@ -177,6 +179,8 @@
     <ClInclude Include="Frojengine\System\EngineSystem.h" />
     <ClInclude Include="Frojengine\System\FontSystem.h" />
     <ClInclude Include="Frojengine\System\GraphicsSystem.h" />
+    <ClInclude Include="Hero.h" />
+    <ClInclude Include="MainScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

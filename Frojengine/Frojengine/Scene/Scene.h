@@ -20,16 +20,14 @@ public:
 	~CScene();
 
 	virtual bool Load() = 0;
-	virtual bool CreateObjs() = 0;
 	virtual void Release() = 0;
 
 	void Update(float deltaTime);
-	void Render(LPDXDC pDXDC);
+	void Render();
 
 	void AddObject(CObject& obj);
-
-protected:
 	void AddDeleteList(CObject* pObj);
 
+protected:
 	void ReleaseObjs();
 };

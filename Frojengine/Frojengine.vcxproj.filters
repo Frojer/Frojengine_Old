@@ -90,6 +90,12 @@
     <ClCompile Include="Frojengine\Object\Model.cpp">
       <Filter>Frojengine\Object\SourceFile</Filter>
     </ClCompile>
+    <ClCompile Include="MainScene.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Hero.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Frojengine\Frojengine.h">
@@ -139,6 +145,12 @@
     </ClInclude>
     <ClInclude Include="Frojengine\Object\Model.h">
       <Filter>Frojengine\Object\HeaderFile</Filter>
+    </ClInclude>
+    <ClInclude Include="MainScene.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Hero.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

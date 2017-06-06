@@ -9,9 +9,6 @@ CEngineSystem::CEngineSystem()
 	m_pGraphics = nullptr;
 	m_ClassName = nullptr;
 	m_WindowName = nullptr;
-
-	m_CurScene = nullptr;
-	m_ChangeScene = nullptr;
 }
 
 

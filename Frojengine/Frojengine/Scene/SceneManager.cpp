@@ -1,13 +1,11 @@
 #include "SceneManager.h"
 
-CScene* CSceneManager::s_CurrentScene = nullptr;
-CScene* CSceneManager::s_UpdateScene = nullptr;
-bool CSceneManager::s_bLoading = false;
-vector<CScene*> CSceneManager::s_Scenes;
+CScene* CSceneManager::CurrentScene = nullptr;
 
 CSceneManager::CSceneManager()
 {
-
+	m_ChangeScene = nullptr;
+	m_bLoading = false;
 }
 
 CSceneManager::CSceneManager(const CSceneManager& obj)
@@ -20,13 +18,29 @@ CSceneManager::~CSceneManager()
 
 }
 
+
+
+void CSceneManager::Release()
+{
+	for (int i = 0; i < m_Scenes.size(); i++)
+	{
+		m_Scenes[i]->Release();
+		delete m_Scenes[i];
+		m_Scenes[i] = nullptr;
+	}
+
+	m_Scenes.clear();
+}
+
+
+
 bool CSceneManager::LoadScene(LPCWSTR sceneName)
 {
-	for (UINT i = 0; i < s_Scenes.size(); i++)
+	for (UINT i = 0; i < m_Scenes.size(); i++)
 	{
-		if (wcscmp(s_Scenes[i]->m_Name, sceneName) == 0)
+		if (wcscmp(m_Scenes[i]->m_Name, sceneName) == 0)
 		{
-			CSceneManager::s_UpdateScene = s_Scenes[i];
+			m_ChangeScene = m_Scenes[i];
 			break;
 		}
 	}
@@ -36,27 +50,27 @@ bool CSceneManager::LoadScene(LPCWSTR sceneName)
 
 bool CSceneManager::LoadScene(UINT sceneNumber)
 {
-	if (s_Scenes.size() <= sceneNumber)
+	if (m_Scenes.size() <= sceneNumber)
 		return false;
 
-	CSceneManager::s_UpdateScene = s_Scenes[sceneNumber];
+	m_ChangeScene = m_Scenes[sceneNumber];
 
 	return true;
 }
 
 void CSceneManager::ChangeScene()
 {
-	if (s_bLoading || s_UpdateScene == nullptr)
+	if (m_bLoading || m_ChangeScene == nullptr)
 		return;
 
-	CSceneManager::s_CurrentScene = CSceneManager::s_UpdateScene;
-	CSceneManager::s_UpdateScene = nullptr;
-	s_bLoading = false;
+	CSceneManager::CurrentScene = CSceneManager::m_ChangeScene;
+	CSceneManager::m_ChangeScene = nullptr;
+	m_bLoading = false;
 
-	CSceneManager::s_CurrentScene->Load();
+	CSceneManager::CurrentScene->Load();
 }
 
-void CSceneManager::AddScene(CScene& scene)
+void CSceneManager::AddScene(CScene* scene)
 {
-	s_Scenes.push_back(&scene);
+	m_Scenes.push_back(scene);
 }

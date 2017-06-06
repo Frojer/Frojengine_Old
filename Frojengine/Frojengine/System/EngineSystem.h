@@ -19,9 +19,6 @@ private:
 
 	CGraphicsSystem* m_pGraphics;
 
-	CScene* m_CurScene;
-	CScene* m_ChangeScene;
-
 	float m_deltaTime;
 
 	int m_Width;

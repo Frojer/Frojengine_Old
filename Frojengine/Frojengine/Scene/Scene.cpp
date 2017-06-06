@@ -28,11 +28,11 @@ void CScene::Update(float deltaTime)
 	}
 }
 
-void CScene::Render(LPDXDC pDXDC)
+void CScene::Render()
 {
 	for (list<CObject*>::iterator iter = m_Objs.begin(); iter != m_Objs.end(); iter++)
 	{
-		(*iter)->Render(pDXDC);
+		(*iter)->Render();
 	}
 }
 

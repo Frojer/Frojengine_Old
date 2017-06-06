@@ -28,7 +28,7 @@ bool CFontSystem::Create(LPDEVICE pDevice, LPCWSTR fontFileName)
 	m_pFontBatch = new SpriteBatch(pDXDC);
 
 	//DirectX Toolkit : Sprite Font 객체 생성.
-	TCHAR* filename = L"../Yena/Font/굴림9k.sfont";	//ASCII 0 ~ 255 + 특수문자'■' + Unicode 한글 완성형 총 11,440 글자, 크기:9		
+	TCHAR* filename = L"../Font/굴림9k.sfont";	//ASCII 0 ~ 255 + 특수문자'■' + Unicode 한글 완성형 총 11,440 글자, 크기:9		
 	try {
 		m_pFont = new SpriteFont(pDevice, filename);
 		m_pFont->SetLineSpacing(14.0f);				//폰트9 기준, 줄간격 설정. '다중라인 출력시 흐려짐 방지용'

@@ -9,21 +9,25 @@ using namespace std;
 class CSceneManager
 {
 private:
-	static CScene* s_CurrentScene;
-	static CScene* s_UpdateScene;
+	CScene* m_ChangeScene;
 
-	static bool s_bLoading;
-	static vector<CScene*> s_Scenes;
+	bool m_bLoading;
+	vector<CScene*> m_Scenes;
+
+public:
+	static CScene* CurrentScene;
 
 public:
 	explicit CSceneManager();
 	CSceneManager(const CSceneManager& obj);
 	~CSceneManager();
+
+	void Release();
 	
-	static bool LoadScene(LPCWSTR sceneName);
-	static bool LoadScene(UINT sceneNumber);
+	bool LoadScene(LPCWSTR sceneName);
+	bool LoadScene(UINT sceneNumber);
 
-	static void ChangeScene();
+	void ChangeScene();
 
-	static void AddScene(CScene& scene);
+	void AddScene(CScene* scene);
 };
