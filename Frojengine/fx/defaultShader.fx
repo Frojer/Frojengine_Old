@@ -60,8 +60,7 @@ float4 Light(float4 nrm);
 
 VSOutput VS_Main(
 	float4 pos : POSITION,    //[입력] 정점좌표. Vertex Position (Model Space, 3D)
-	float4 nrm : NORMAL,       //[입력] 노멀 normal ★
-	float3 tex : TEXCOORD
+	float4 nrm : NORMAL       //[입력] 노멀 normal ★
 )
 {
 	//* 아래의 테스트를 수행하기 전에  

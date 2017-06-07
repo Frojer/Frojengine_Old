@@ -21,6 +21,7 @@ public:
 	void Release();
 
 	void Update();
+	void UpdateCB(MATRIXA* mTM, CLight* pLight);
 	void Apply();
 
 	// Get, Set ÇÔ¼ö

@@ -70,11 +70,11 @@ void CScene::Render()
 		if (m_Cameras[i]->m_Enable)
 		{
 			m_Cameras[i]->UseCamera();
-			SceneRender();
 			for (list<CObject*>::iterator iter = m_Objs.begin(); iter != m_Objs.end(); iter++)
 			{
 				(*iter)->Render();
 			}
+			SceneRender();
 		}
 	}
 }

@@ -9,7 +9,7 @@ bool MainScene::Load()
 	pShader->Create(m_pDevice, L"fx/Demo.fx");
 
 	CMaterial* pMat = new CMaterial;
-	pMat->Create(VECTOR4(1.0f, 1.0f, 1.0f, 1.0f), VECTOR4(0.2f, 0.2f, 0.2f, 0.2f), VECTOR4(0.0f, 0.0f, 0.0f, 0.0f), 1.0f, pShader);
+	pMat->Create(VECTOR4(1.0f, 1.0f, 1.0f, 1.0f), VECTOR4(1.0f, 1.0f, 1.0f, 1.0f), VECTOR4(0.0f, 0.0f, 0.0f, 0.0f), 1.0f, pShader);
 
 
 	m_pCamera = new CCamera;
@@ -24,13 +24,41 @@ bool MainScene::Load()
 
 	m_pCamera->Create(m_pDevice, VECTOR3(0.0f, 5.0f, -20.0f), VECTOR3(0.0f, 1.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), 45.0f, 1.0f, 100.0f, 800, 600, vp);
 
+	m_pLight = new CLight;
+	m_pLight->Create(VECTOR3(1.0f, -3.0f, 2.0f), COLOR(1.0f, 1.0f, 1.0f, 1.0f), COLOR(0.2f, 0.2f, 0.2f, 1.0f), 1000.0f);
+
+	m_pHero = new Hero;
+	m_pHero->Create(m_pDevice, L"Hero", VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f));
+	m_pHero->SetLight(m_pLight);
+
 	// 로드메쉬 안에 히어로로 임시로 바꿈 나중에 수정 필요
-	result = LoadMesh(m_pDevice, L"Resource/test.obj", (CObject**)&m_pHero, pMat);
+	result = LoadMesh(m_pDevice, L"Resource/hero.obj", (CObject**)&m_pHero, pMat);
 
 	if (!result)
 	{
 		return false;
 	}
+
+	CShader* pShader2 = new CShader;
+	pShader2->Create(m_pDevice, L"fx/Demo.fx");
+
+	CMaterial* pMat2 = new CMaterial;
+	pMat2->Create(VECTOR4(0.0f, 1.0f, 0.0f, 1.0f), VECTOR4(0.0f, 1.0f, 0.0f, 1.0f), VECTOR4(0.0f, 0.0f, 0.0f, 0.0f), 1.0f, pShader2);
+
+
+	m_pTerrain = new Terrain;
+	m_pTerrain->Create(m_pDevice, L"Terrain", VECTOR3(0.0f, -1.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(128.0f, 1.0f, 128.0f));
+	m_pTerrain->SetLight(m_pLight);
+
+	// 로드메쉬 안에 히어로로 임시로 바꿈 나중에 수정 필요
+	result = LoadMesh(m_pDevice, L"Resource/Terrain.obj", (CObject**)&m_pTerrain, pMat2);
+
+	if (!result)
+	{
+		return false;
+	}
+
+	m_pHero->m_pMainCamera = m_pCamera;
 
 	m_pFont = new CFontSystem;
 
@@ -48,16 +76,7 @@ bool MainScene::Load()
 
 void MainScene::SceneRender()
 {
-	// 렌더링 옵션 조절
-	if (IsKeyUp(VK_SPACE))	CGraphicsSystem::m_bWireFrame = !CGraphicsSystem::m_bWireFrame;
-	if (IsKeyUp(VK_F4))		CGraphicsSystem::m_bCullBack = !CGraphicsSystem::m_bCullBack;
-	//if (IsKeyUp(VK_F5))		g_bZEnable ^= TRUE;		
-	//if (IsKeyUp(VK_F6))		g_bZWrite ^= TRUE;		
 
-
-	// 배경색 설정.
-	if (CGraphicsSystem::m_bWireFrame)	CGraphicsSystem::m_BackColor = COLOR(0.20f, 0.20f, 0.20f, 1);
-	else								CGraphicsSystem::m_BackColor = COLOR(0, 0.12f, 0.35f, 1);
 
 	//도움말 및 기타 렌더링 정보 출력.
 	//프레임수 표시.

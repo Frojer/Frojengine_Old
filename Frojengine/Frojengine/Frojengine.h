@@ -8,6 +8,7 @@
 #include "FrojengineDefine.h"
 
 #include "Object\Camera.h"
+#include "Shader\Light.h"
 #include "Shader\Shader.h"
 #include "Shader\Material.h"
 #include "Object\Mesh.h"

@@ -5,7 +5,9 @@ CShader::CShader()
 	m_pVS = nullptr;
 	m_pPS = nullptr;
 	m_pVSCode = nullptr;
-	m_pCB = nullptr;
+	m_pCB_WVP = nullptr;
+	m_pCB_Lit = nullptr;
+	m_pCB_Mtrl = nullptr;
 }
 
 CShader::CShader(const CShader& obj)
@@ -37,10 +39,20 @@ bool CShader::Create(LPDEVICE pDevice, LPCWSTR fileName)
 	//LoadLayout();
 
 	// 상수 데이터 초기화
-	ZeroMemory(&m_CBuffer, sizeof(CB_WVP));
+	ZeroMemory(&m_cbWVP, sizeof(CB_WVP));
 
 	// 상수 버퍼 생성
-	CreateDynamicConstantBuffer(sizeof(CB_WVP), &m_CBuffer, &m_pCB);
+	CreateDynamicConstantBuffer(sizeof(CB_WVP), &m_cbWVP, &m_pCB_WVP);
+
+	// 조명용 상수버퍼 생성.★
+	// 조명정보가 실시간으로 변하지 않는다면, 일반(정적) 상수버퍼로도 충분하다.
+	ZeroMemory(&m_cbLit, sizeof(CB_LIGHT));
+	CreateDynamicConstantBuffer(sizeof(CB_LIGHT), &m_cbLit, &m_pCB_Lit);
+
+	// 재질용 상수버퍼 생성.★
+	// 재질정보가 실시간으로 변하지 않는다면, 일반(정적) 상수버퍼로도 충분하다.
+	ZeroMemory(&m_cbMtrl, sizeof(CB_MATERIAL));
+	CreateDynamicConstantBuffer(sizeof(CB_MATERIAL), &m_cbMtrl, &m_pCB_Mtrl);
 
 
 
@@ -53,7 +65,7 @@ void CShader::Release()
 	SAFE_RELEASE(m_pVS);
 	SAFE_RELEASE(m_pPS);
 	SAFE_RELEASE(m_pVSCode);
-	SAFE_RELEASE(m_pCB);
+	SAFE_RELEASE(m_pCB_WVP);
 }
 
 
@@ -85,7 +97,9 @@ void CShader::Apply()
 	//------------------------------------
 	//상수 버퍼 설정 & 갱신.
 	//...
-	m_pDXDC->VSSetConstantBuffers(0, 1, &m_pCB);
+	m_pDXDC->VSSetConstantBuffers(0, 1, &m_pCB_WVP);
+	m_pDXDC->VSSetConstantBuffers(1, 1, &m_pCB_Lit);
+	m_pDXDC->VSSetConstantBuffers(2, 1, &m_pCB_Mtrl);
 	
 	//셰이더 설정.
 	m_pDXDC->VSSetShader(m_pVS, nullptr, 0);
@@ -105,7 +119,7 @@ void CShader::Apply()
 }
 
 
-void CShader::UpdateCB(MATRIXA* pWorld)
+void CShader::UpdateCB(MATRIXA* pWorld, CLight* light, VECTOR diffuse, VECTOR ambient)
 {
 	// 외부 지정 행렬로 상수버퍼 갱신. 
 	
@@ -113,14 +127,27 @@ void CShader::UpdateCB(MATRIXA* pWorld)
 	//-----------------------
 	// 상수버퍼 갱신
 	//-----------------------
-	XMStoreFloat4x4(&m_CBuffer.mWorld, *pWorld);
+	m_cbWVP.mWorld = *pWorld;
+	m_cbWVP.mWV = m_cbWVP.mWorld * m_cbWVP.mView;	//★
 	//m_CBuffer.mTM = XMMatrixTranspose(mTM);	//셰이더에서 '열 우선 Column major' 기준으로 처리하면 속도 향상을 기대할 수 있습니다. 이를 위한 행렬 전치 처리.	
-	XMStoreFloat4x4(&m_CBuffer.mView, XMLoadFloat4x4(&CGraphicsSystem::mView));
-	XMStoreFloat4x4(&m_CBuffer.mProj, XMLoadFloat4x4(&CGraphicsSystem::mProj));
+	m_cbWVP.mView = XMLoadFloat4x4(&CGraphicsSystem::mView);
+	m_cbWVP.mProj = XMLoadFloat4x4(&CGraphicsSystem::mProj);
 	//셰이더 상수 버퍼 갱신.(동적버퍼)
-	UpdateDynamicConstantBuffer(m_pCB, &m_CBuffer, sizeof(CB_WVP));
+	UpdateDynamicConstantBuffer(m_pCB_WVP, &m_cbWVP, sizeof(CB_WVP));
 	//셰이더 상수 버퍼 갱신.(정적버퍼)
 	//m_pDXDC->UpdateSubresource(m_pCB, 0, nullptr, &m_CBuffer, 0, 0);
+
+	VECTOR dir = XMLoadFloat3(&light->m_Direction);
+	m_cbLit.Direction = XMVector3Normalize(-dir);
+	m_cbLit.Diffuse = XMLoadFloat4(&light->m_Diffuse);
+	m_cbLit.Ambient = XMLoadFloat4(&light->m_Ambient);
+	m_cbLit.Range = light->m_Range;
+	m_cbLit.LitOn = TRUE;
+	UpdateDynamicConstantBuffer(m_pCB_Lit, &m_cbLit, sizeof(CB_LIGHT));
+
+	m_cbMtrl.Diffuse = diffuse;
+	m_cbMtrl.Ambient = ambient;
+	UpdateDynamicConstantBuffer(m_pCB_Mtrl, &m_cbMtrl, sizeof(CB_MATERIAL));
 }
 
 

@@ -102,6 +102,11 @@ void CObject::Update(float deltaTime)
 		mWorld *= XMLoadFloat4x4(&m_pParent->m_WorldM);
 	}
 
+	if (m_pModel != nullptr)
+	{
+		m_pModel->UpdateCB(&XMLoadFloat4x4(&m_WorldM), m_pLight);
+	}
+
 	XMStoreFloat4x4(&m_PosM, mPos);
 	XMStoreFloat4x4(&m_RotM, mRot);
 	XMStoreFloat4x4(&m_ScaleM, mScale);
@@ -119,7 +124,7 @@ void CObject::Render()
 {
 	if (m_pModel == nullptr)
 		return;
-	m_pModel->UpdateCB(&XMLoadFloat4x4(&m_WorldM));
+
 	m_pModel->Draw();
 }
 
@@ -454,18 +459,12 @@ bool LoadMesh(LPDEVICE pDevice, LPCWSTR fileName, CObject** o_pObject, CMaterial
 		CModel* model = new CModel;
 		model->Create(pDevice, meshes[0], pMat);
 
-		CObject* obj = new Hero;
-		obj->Create(pDevice, meshes[0]->m_Name, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f), model);
-
-		*o_pObject = obj;
+		(*o_pObject)->SetModel(model);
 	}
 
 	else
 	{
-		CObject* parent = new Hero;
-		parent->Create(pDevice, fileName, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f));
-
-		CSceneManager::CurrentScene->AddObject(parent);
+		CSceneManager::CurrentScene->AddObject(*o_pObject);
 
 		for (UINT i = 0; i < meshes.size(); i++)
 		{
@@ -473,10 +472,8 @@ bool LoadMesh(LPDEVICE pDevice, LPCWSTR fileName, CObject** o_pObject, CMaterial
 			model->Create(pDevice, meshes[i], pMat);
 
 			CObject* obj = new CObject;
-			obj->Create(pDevice, meshes[i]->m_Name, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f), model, parent);
+			obj->Create(pDevice, meshes[i]->m_Name, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f), model, *o_pObject);
 		}
-
-		*o_pObject = parent;
 	}
 
 	return true;

@@ -96,6 +96,12 @@
     <ClCompile Include="Hero.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Frojengine\Shader\Light.cpp">
+      <Filter>Frojengine\Shader\SourceFile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Frojengine\Frojengine.h">
@@ -151,6 +157,12 @@
     </ClInclude>
     <ClInclude Include="Hero.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Frojengine\Shader\Light.h">
+      <Filter>Frojengine\Shader\HeaderFile</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

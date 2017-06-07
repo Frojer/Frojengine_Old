@@ -153,6 +153,7 @@
     <ClCompile Include="Frojengine\Object\Object.cpp" />
     <ClCompile Include="Frojengine\Scene\Scene.cpp" />
     <ClCompile Include="Frojengine\Scene\SceneManager.cpp" />
+    <ClCompile Include="Frojengine\Shader\Light.cpp" />
     <ClCompile Include="Frojengine\Shader\Material.cpp" />
     <ClCompile Include="Frojengine\Shader\Shader.cpp" />
     <ClCompile Include="Frojengine\System\EngineSystem.cpp" />
@@ -161,6 +162,7 @@
     <ClCompile Include="Hero.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainScene.cpp" />
+    <ClCompile Include="Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Frojengine\DirectX.h" />
@@ -174,6 +176,7 @@
     <ClInclude Include="Frojengine\SceneList.h" />
     <ClInclude Include="Frojengine\Scene\Scene.h" />
     <ClInclude Include="Frojengine\Scene\SceneManager.h" />
+    <ClInclude Include="Frojengine\Shader\Light.h" />
     <ClInclude Include="Frojengine\Shader\Material.h" />
     <ClInclude Include="Frojengine\Shader\Shader.h" />
     <ClInclude Include="Frojengine\System\EngineSystem.h" />
@@ -181,6 +184,7 @@
     <ClInclude Include="Frojengine\System\GraphicsSystem.h" />
     <ClInclude Include="Hero.h" />
     <ClInclude Include="MainScene.h" />
+    <ClInclude Include="Terrain.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -48,6 +48,13 @@ void CMaterial::Update()
 
 
 
+void CMaterial::UpdateCB(MATRIXA* mTM, CLight* pLight)
+{
+	m_pShader->UpdateCB(mTM, pLight, XMLoadFloat4(&m_Diffuse), XMLoadFloat4(&m_Ambient));
+}
+
+
+
 void CMaterial::Apply()
 {
 	m_pShader->Apply();

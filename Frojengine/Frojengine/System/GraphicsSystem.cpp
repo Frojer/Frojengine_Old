@@ -527,6 +527,7 @@ void CGraphicsSystem::DSStateRelease()
 void CGraphicsSystem::ClearBackBuffer()
 {
 	m_pDXDC->ClearRenderTargetView(m_pRTView, (float*)&m_BackColor);
+	m_pDXDC->ClearDepthStencilView(m_pDSView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 
@@ -538,6 +539,18 @@ void CGraphicsSystem::ClearBackBuffer()
 #define CheckRMode(k, v) if((k)) m_RMode |= (v); else m_RMode &= ~(v);
 void CGraphicsSystem::RenderModeUpdate()
 {
+	// 렌더링 옵션 조절
+	if (IsKeyUp(VK_SPACE))	CGraphicsSystem::m_bWireFrame ^= TRUE;
+	if (IsKeyUp(VK_F4))		CGraphicsSystem::m_bCullBack ^= TRUE;
+	//if (IsKeyUp(VK_F5))		CGraphicsSystem::m_bLightEnable ^= TRUE;
+	if (IsKeyUp(VK_F5))		CGraphicsSystem::m_bZEnable ^= TRUE;
+	if (IsKeyUp(VK_F6))		CGraphicsSystem::m_bZWrite ^= TRUE;
+
+
+	// 배경색 설정.
+	if (CGraphicsSystem::m_bWireFrame)	CGraphicsSystem::m_BackColor = COLOR(0.15f, 0.15f, 0.15f, 1.0f);
+	else								CGraphicsSystem::m_BackColor = COLOR(0, 0.12f, 0.35f, 1);
+
 	CheckRMode(m_bCullBack, RM_CULLBACK);
 	CheckRMode(m_bWireFrame, RM_WIREFRAME);
 
@@ -559,6 +572,16 @@ void CGraphicsSystem::RenderModeUpdate()
 		m_pDXDC->RSSetState(m_RState[RS_WIRECULLBACK]);
 		break;
 	}
+
+	// 깊이 연산 모드 전환.	 
+	if (m_bZEnable)
+	{
+		if (m_bZWrite)
+			m_pDXDC->OMSetDepthStencilState(m_DSState[SO_DEPTH_ON], 0);			//깊이 버퍼 동작 (기본값)
+		else  m_pDXDC->OMSetDepthStencilState(m_DSState[SO_DEPTH_WRITE_OFF], 0);	//깊이 버퍼  : Z-Test On + Z-Write Off.
+	}
+	else  m_pDXDC->OMSetDepthStencilState(m_DSState[SO_DEPTH_OFF], 0);	//깊이 버퍼 비활성화 : Z-Test Off + Z-Write Off.
+
 }
 
 

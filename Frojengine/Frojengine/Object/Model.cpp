@@ -236,7 +236,7 @@ void CModel::Update(float deltaTime)
 
 /////////////////////////////////////////////////////////////////////////////
 //
-void CModel::UpdateCB(MATRIXA* mTM)
+void CModel::UpdateCB(MATRIXA* mTM, CLight* light)
 {
 
 	//외부 지정 행렬로 상수버퍼 갱신. 
@@ -245,7 +245,7 @@ void CModel::UpdateCB(MATRIXA* mTM)
 	//-----------------------
 	// 상수버퍼 갱신
 	//-----------------------
-	m_pMaterial->GetShader()->UpdateCB(mTM);
+	m_pMaterial->UpdateCB(mTM, light);
 }
 
 

@@ -22,6 +22,8 @@ protected:
 	MATRIX m_ScaleM;
 	MATRIX m_WorldM;
 
+	CLight* m_pLight;
+
 	CModel*	m_pModel;
 
 	CObject* m_pParent;
@@ -55,6 +57,8 @@ public:
 	CModel* GetModel() { return m_pModel; }
 
 	void SetMaterial(CMaterial* pMat);
+
+	void SetLight(CLight* pLight) { m_pLight = pLight; }
 
 	friend void CScene::ReleaseObjs();
 };

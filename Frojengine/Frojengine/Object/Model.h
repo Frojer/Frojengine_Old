@@ -36,7 +36,7 @@ public:
 	virtual void Update(float deltaTime);
 	virtual void Draw();
 
-	virtual void UpdateCB(MATRIXA* mTM);
+	virtual void UpdateCB(MATRIXA* mTM, CLight* light);
 
 	CMesh* GetMesh() { return m_pMesh; }
 	void ChangeMesh(CMesh* pMesh);
