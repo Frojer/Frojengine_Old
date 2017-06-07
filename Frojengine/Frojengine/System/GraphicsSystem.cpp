@@ -1,11 +1,26 @@
 #include "GraphicsSystem.h"
 
+COLOR CGraphicsSystem::m_BackColor = COLOR(0.0f, 0.0f, 0.0f, 1.0f);
+bool CGraphicsSystem::m_bWindowMode = true;
+bool CGraphicsSystem::m_bVSync = false;
+bool CGraphicsSystem::m_bCullBack = false;
+bool CGraphicsSystem::m_bWireFrame = false;
+bool CGraphicsSystem::m_bZEnable = true;
+bool CGraphicsSystem::m_bZWrite = true;
+MATRIX CGraphicsSystem::mView;
+MATRIX CGraphicsSystem::mProj;
+
 CGraphicsSystem::CGraphicsSystem()
 {
 	m_pDevice = nullptr;
 	m_pDXDC = nullptr;
 	m_pSwapChain = nullptr;
 	m_pRTView = nullptr;
+
+	m_pDS = nullptr;
+	m_pDSView = nullptr;
+
+	m_RMode = RM_DEFAULT;
 
 	m_BackColor = VECTOR4(0, 0.125f, 0.3f, 1);
 
@@ -53,16 +68,7 @@ bool CGraphicsSystem::Create(HWND hWnd, int width, int height)
 //
 void CGraphicsSystem::Release()
 {
-	// 장치 상태 리셋 : 제거 전에 초기화를 해야 합니다. (메모리 누수 방지)
-	if (m_pDXDC)
-		m_pDXDC->ClearState();
-	
-	//if (m_pSwapChain) m_pSwapChain->SetFullscreenState(false, NULL);
-
-	SAFE_RELEASE(m_pRTView);
-	SAFE_RELEASE(m_pSwapChain);
-	SAFE_RELEASE(m_pDXDC);
-	SAFE_RELEASE(m_pDevice);
+	ReleaseDX();
 }
 
 
@@ -101,11 +107,19 @@ bool CGraphicsSystem::CreateDX(HWND hWnd)
 		return false;
 	}
 
+	// 깊이/스텐실 버퍼 생성.
+	result = CreateDepthStencil();
+
+	if (!result)
+	{
+		return false;
+	}
+
 	// 장치 출력병합기(Output Merger) 에 렌터링 타겟 및 깊이-스텐실 버퍼 등록.
 	m_pDXDC->OMSetRenderTargets(
 		1,				// 렌더타겟 개수.(max: D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT)
 		&m_pRTView,		// 렌더타겟("백버퍼") 등록.	
-		nullptr
+		m_pDSView
 	);
 
 	// 뷰포트 설정
@@ -117,7 +131,7 @@ bool CGraphicsSystem::CreateDX(HWND hWnd)
 	//----------------------------------------
 	// 렌더링에 필요한 사용자 객체등을 생성/관리 합니다.
 	// 카메라, 조명, 폰트, 셰이더 등등...
-
+	StateObjectCreate();
 
 
 	// 작업 완료, 장치 준비 완료.
@@ -134,7 +148,21 @@ bool CGraphicsSystem::CreateDX(HWND hWnd)
 //
 void CGraphicsSystem::ReleaseDX()
 {
+	// 장치 상태 리셋 : 제거 전에 초기화를 해야 합니다. (메모리 누수 방지)
+	if (m_pDXDC)
+		m_pDXDC->ClearState();
 
+	// 상태 객체 제거.
+	StateObjectRelease();
+
+	//if (m_pSwapChain) m_pSwapChain->SetFullscreenState(false, NULL);
+
+	SAFE_RELEASE(m_pDS);
+	SAFE_RELEASE(m_pDSView);
+	SAFE_RELEASE(m_pRTView);
+	SAFE_RELEASE(m_pSwapChain);
+	SAFE_RELEASE(m_pDXDC);
+	SAFE_RELEASE(m_pDevice);
 }
 
 
@@ -157,7 +185,7 @@ bool CGraphicsSystem::CreateDeviceSwapChain(HWND hWnd)
 	// 고전적인 '플립핑Flipping' 체인과 동일한 의미입니다.  
 	DXGI_SWAP_CHAIN_DESC sd;
 	ZeroMemory(&sd, sizeof(sd));
-	sd.Windowed = TRUE;							// 풀스크린 또는 창모드 선택.
+	sd.Windowed = m_bWindowMode;							// 풀스크린 또는 창모드 선택.
 	sd.OutputWindow = hWnd;						// 출력할 윈도우 핸들.
 	sd.BufferCount = 1;							// 백버퍼 개수.
 	//sd.BufferDesc = m_Mode;
@@ -246,6 +274,61 @@ bool CGraphicsSystem::CreateRenderTarget()
 
 
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// 깊이-스텐실버퍼 생성. : DX11 에서는 렌더링버퍼-렌더타겟뷰- 와 마찬가지로, 
+//                       깊이-스텐실버퍼역시 직접 만들어야 합니다.
+//                       디바이스에 등록도 역시 수동입니다.
+//
+bool CGraphicsSystem::CreateDepthStencil()
+{
+	HRESULT hr;
+
+	// 깊이/스텐실 버퍼용 정보 구성.
+	D3D11_TEXTURE2D_DESC   td;
+	ZeroMemory(&td, sizeof(td));
+	td.Width = m_Mode.Width;
+	td.Height = m_Mode.Height;
+	td.MipLevels = 1;
+	td.ArraySize = 1;
+	td.Format = DXGI_FORMAT_D32_FLOAT;			// 32BIT. 깊이 버퍼.
+	td.SampleDesc.Count = 1;					// AA 설정 - RT 과 동일 규격 준수.
+	td.SampleDesc.Quality = 0;
+	td.Usage = D3D11_USAGE_DEFAULT;
+	td.BindFlags = D3D11_BIND_DEPTH_STENCIL;	// 깊이-스텐실 버퍼용으로 설정.
+	td.CPUAccessFlags = 0;
+	td.MiscFlags = 0;
+	// 깊이 버퍼 생성.
+	hr = m_pDevice->CreateTexture2D(&td, NULL, &m_pDS);
+	if (FAILED(hr)) return false;
+
+
+
+	// 깊이-스텐실버퍼용 리소스 뷰 정보 설정. 
+	D3D11_DEPTH_STENCIL_VIEW_DESC  dd;
+	ZeroMemory(&dd, sizeof(dd));
+	dd.Format = td.Format;
+	dd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D; // AA 없음.
+	dd.Texture2D.MipSlice = 0;
+
+	// 깊이-스텐실 버퍼 뷰 생성.
+	hr = m_pDevice->CreateDepthStencilView(m_pDS, &dd, &m_pDSView);
+	if (FAILED(hr))
+	{
+		WindowError(hr, L"깊이/스텐실 버퍼 뷰 생성 실패.");
+		return false;
+	}
+
+	// 리소스 뷰 생성 후, 불필요한 DX 핸들은 해제해야 합니다.(메모리 누수 방지)
+	// SAFE_RELEASE(pDS);
+
+	return true;
+}
+
+
+
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // 뷰포트 설정 :  DX11 에서는 기본처리 되지 않으며 사용자가 직접 설정해야합니다 
@@ -265,6 +348,177 @@ void CGraphicsSystem::SetViewPort()
 
 
 
+////////////////////////////////////////////////////////////////////////////// 
+//
+// 장치 렌더링 상태 객체 생성.
+//
+//----------------------------------------------------------------------------
+// 상태 객체 State Objects (DX10/11)
+// DX10 부터 구형 TnL 의 RenderState 가 제거되었습니다.
+// 이를 대신하는 것이 상태객체 State Objects 인터페이스로, 렌더링 상태를 하나의 그룹으로 
+// 묶고 렌더링시 디바이스에 설정합니다.  이를 통해 장치의 어려 상태 변화를 한번에 설정하여 
+// 불필요한 연산부하(Overhead) 를 줄이고 보다 효과적인 렌더링을 가능케 합니다.
+//
+// 상태객체는 엔진 초기시 제작후 사용하기를 권장하며 종료시 제거(Release) 해야 합니다.
+// 상태객체는 수정불가능(Immutable, 읽기전용) 개체 입니다.
+// DX9 에서는 State-Block 이 이와 유사한 기능을 담당했었습니다.
+//
+// 상태 객체 인터페이스 중 '레스터라이즈 스테이지 Rasterize Stage' 상태 조절은 
+// ID3D11RasterizerState 인터페이스를 통해 처리합니다.  
+// 간단하게 렌더링 설정/기능 모듬 정도로 생각합시다.  자세한 것은 다음을 참조하십시요. 
+// 링크1 : 상태 객체 https://msdn.microsoft.com/en-us/library/windows/desktop/bb205071(v=vs.85).aspx
+// 링크2 : 깊이버퍼 상태 구성하기 https://msdn.microsoft.com/ko-kr/library/windows/desktop/bb205074(v=vs.85).aspx#Create_Depth_Stencil_State 
+//----------------------------------------------------------------------------
+//
+void CGraphicsSystem::StateObjectCreate()
+{
+
+	//----------------------------
+	// 레스터 상태 개체 생성 : "레스터라이즈 스테이지 Rasterize Stage" 상태 조절.
+	//----------------------------
+	RasterStateLoad();
+
+	//----------------------------
+	// 깊이/스텐실 상태 개체 생성.: "출력병합기 Output Merger" 상태 조절. 
+	//----------------------------
+	DSStateLoad();
+
+
+
+	//----------------------------
+	// 알파블렌딩 상태 개체 생성 : "출력병합기 Output Merger" 상태 조절. 
+	//----------------------------
+	//...
+
+}
+
+
+
+void CGraphicsSystem::StateObjectRelease()
+{
+	RasterStateRelease();
+	DSStateRelease();
+}
+
+
+
+
+////////////////////////////////////////////////////////////////////////////// 
+// 
+// 레스터 상태 객체 생성.
+//
+void CGraphicsSystem::RasterStateLoad()
+{
+	//기본 렌더링 상태 개체.
+	D3D11_RASTERIZER_DESC rd;
+	rd.FillMode = D3D11_FILL_SOLID;		// 삼각형 색상 채우기.(기본값)
+	rd.CullMode = D3D11_CULL_NONE;		// 컬링 없음. (기본값은 컬링 Back)		
+	rd.FrontCounterClockwise = false;   // 이하 기본값...
+	rd.DepthBias = 0;
+	rd.DepthBiasClamp = 0;
+	rd.SlopeScaledDepthBias = 0;
+	rd.DepthClipEnable = true;
+	rd.ScissorEnable = false;
+	rd.MultisampleEnable = false;
+	rd.AntialiasedLineEnable = false;
+	//레스터라이져 객체 생성.
+	m_pDevice->CreateRasterizerState(&rd, &m_RState[RS_DEFAULT]);
+
+	// 와이어 프레임 그리기. 
+	rd.FillMode = D3D11_FILL_WIREFRAME;
+	rd.CullMode = D3D11_CULL_NONE;
+	//레스터라이져 객체 생성.
+	m_pDevice->CreateRasterizerState(&rd, &m_RState[RS_WIREFRM]);
+
+	// 컬링 On! "CCW"
+	rd.FillMode = D3D11_FILL_SOLID;
+	rd.CullMode = D3D11_CULL_BACK;
+	m_pDevice->CreateRasterizerState(&rd, &m_RState[RS_CULLBACK]);
+
+	//와이어 프레임 + 컬링 On! "CCW"
+	rd.FillMode = D3D11_FILL_WIREFRAME;
+	rd.CullMode = D3D11_CULL_BACK;
+	m_pDevice->CreateRasterizerState(&rd, &m_RState[RS_WIRECULLBACK]);
+}
+
+
+
+
+////////////////////////////////////////////////////////////////////////////// 
+//
+// 레스터 상태 객체 제거 : 어플리케이션 종료시 호출.
+//
+void CGraphicsSystem::RasterStateRelease()
+{
+	for (int i = 0; i<RS_MAX_; i++)
+	{
+		SAFE_RELEASE(m_RState[i]);
+	}
+
+}
+
+
+
+
+
+void CGraphicsSystem::DSStateLoad()
+{
+	//----------------------------
+	// 레스터 상태 개체 생성 : "레스터라이즈 스테이지 Rasterize Stage" 상태 조절.
+	//----------------------------
+	//...
+
+
+	//----------------------------
+	// 깊이/스텐실 상태 개체 생성.: "출력병합기 Output Merger" 상태 조절. 
+	//----------------------------
+	//...	 
+	D3D11_DEPTH_STENCIL_DESC  ds;
+	ds.DepthEnable = TRUE;
+	ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	ds.DepthFunc = D3D11_COMPARISON_LESS;
+	ds.StencilEnable = FALSE;
+	//ds.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+	//ds.StnecilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
+	//...이하 기본값, 생략... 
+	//...
+	//첫번째 상태 객체 : Z-Test ON! (기본값)
+	m_pDevice->CreateDepthStencilState(&ds, &m_DSState[SO_DEPTH_ON]);
+
+	//두번째 상태 객체 : Z-Test OFF 상태.
+	ds.DepthEnable = FALSE;
+	m_pDevice->CreateDepthStencilState(&ds, &m_DSState[SO_DEPTH_OFF]);
+
+	//세번째 상태 객체 : Z-Test On + Z-Write OFF.
+	// Z-Test (ZEnable, DepthEnable) 이 꺼지면, Z-Write 역시 비활성화 됩니다.
+	ds.DepthEnable = TRUE;
+	ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;		//깊이값 쓰기 끔.
+	m_pDevice->CreateDepthStencilState(&ds, &m_DSState[SO_DEPTH_WRITE_OFF]);
+
+
+
+	//----------------------------
+	// 알파블렌딩 상태 개체 생성 : "출력병합기 Output Merger" 상태 조절. 
+	//----------------------------
+	//...
+}
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//  깊이/스텐실 버퍼 상태객체 제거하기 : 엔진 종료시 1회 호출.
+//
+void CGraphicsSystem::DSStateRelease()
+{
+	for (int i = 0; i < SO_MAX_; i++)
+		SAFE_RELEASE(m_DSState[i]);
+}
+
+
+
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -273,6 +527,38 @@ void CGraphicsSystem::SetViewPort()
 void CGraphicsSystem::ClearBackBuffer()
 {
 	m_pDXDC->ClearRenderTargetView(m_pRTView, (float*)&m_BackColor);
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////// 
+//
+// 렌더링 모드 전환 : 지정된 모드의 조합을 통해 렌더링 상태를 조절.
+//
+#define CheckRMode(k, v) if((k)) m_RMode |= (v); else m_RMode &= ~(v);
+void CGraphicsSystem::RenderModeUpdate()
+{
+	CheckRMode(m_bCullBack, RM_CULLBACK);
+	CheckRMode(m_bWireFrame, RM_WIREFRAME);
+
+
+	// 렌더링 모드 전환 : : 지정된 모드의 조합을 통해 렌더링 상태를 조절.
+	switch (m_RMode)
+	{
+	default:
+	case RM_DEFAULT:
+		m_pDXDC->RSSetState(m_RState[RS_DEFAULT]);
+		break;
+	case RM_WIREFRAME:
+		m_pDXDC->RSSetState(m_RState[RS_WIREFRM]);
+		break;
+	case RM_CULLBACK:
+		m_pDXDC->RSSetState(m_RState[RS_CULLBACK]);
+		break;
+	case RM_WIREFRAME | RM_CULLBACK:
+		m_pDXDC->RSSetState(m_RState[RS_WIRECULLBACK]);
+		break;
+	}
 }
 
 

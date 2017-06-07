@@ -4,9 +4,8 @@ list<CMesh*> CMesh::deleteList;
 
 CMesh::CMesh()
 {
-	deleteList.push_back(this);
-
 	m_Name = L"Default";
+	m_Ref = 0;
 }
 
 CMesh::CMesh(const CMesh& obj)
@@ -23,6 +22,11 @@ CMesh::~CMesh()
 void CMesh::Release()
 {
 	--m_Ref;
+
+	if (m_Ref == 0)
+	{
+		deleteList.push_back(this);
+	}
 }
 
 

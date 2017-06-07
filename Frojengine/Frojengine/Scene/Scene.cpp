@@ -38,7 +38,7 @@ void CScene::Release()
 
 	m_Objs.clear();
 
-	for (int i = 0; i < m_Cameras.size(); i++)
+	for (UINT i = 0; i < m_Cameras.size(); i++)
 	{
 		SAFE_DELETE(m_Cameras[i]);
 	}
@@ -65,7 +65,7 @@ void CScene::Update(float deltaTime)
 
 void CScene::Render()
 {
-	for (int i = 0; i < m_Cameras.size(); i++)
+	for (UINT i = 0; i < m_Cameras.size(); i++)
 	{
 		if (m_Cameras[i]->m_Enable)
 		{

@@ -56,7 +56,7 @@ public:
 	// ¸â¹ö Á¢±ÙÀÚ.
 	LPVSCODE  GetVSCode() { return m_pVSCode; }
 	LPVOID	  GetBufferPointer() { return m_pVSCode->GetBufferPointer(); }
-	UINT	  GetBufferSize() { return m_pVSCode->GetBufferSize(); }
+	SIZE_T	  GetBufferSize() { return m_pVSCode->GetBufferSize(); }
 	CB_WVP* GetCBuffer() { return &m_CBuffer; }
 };
 

@@ -5,11 +5,10 @@
 ///////////////////////
 
 #include "..\Frojengine.h"
+#include "..\..\Hero.h"
 
 CObject::CObject()
 {
-	m_Name = nullptr;
-
 	m_Pos = VECTOR3(0.0f, 0.0f, 0.0f);
 	m_Rot = VECTOR3(0.0f, 0.0f, 0.0f);
 	m_Scale = VECTOR3(1.0f, 1.0f, 1.0f);
@@ -38,7 +37,7 @@ CObject::~CObject()
 }
 
 
-bool CObject::Create(LPDEVICE pDevice, LPCWSTR name, XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale, CModel* pModel, CObject* parent)
+bool CObject::Create(LPDEVICE pDevice, wstring name, XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale, CModel* pModel, CObject* parent)
 {
 	m_pDevice = pDevice;
 	m_pDevice->GetImmediateContext(&m_pDXDC);
@@ -118,6 +117,9 @@ void CObject::Update(float deltaTime)
 
 void CObject::Render()
 {
+	if (m_pModel == nullptr)
+		return;
+	m_pModel->UpdateCB(&XMLoadFloat4x4(&m_WorldM));
 	m_pModel->Draw();
 }
 
@@ -132,7 +134,9 @@ void CObject::SetParent(CObject* parent)
 	}
 
 	m_pParent = parent;
-	m_pParent->AddChild(this);
+
+	if (m_pParent != nullptr)
+		m_pParent->AddChild(this);
 }
 
 void CObject::AddChild(CObject* child)
@@ -149,7 +153,7 @@ CObject* CObject::GetChild(LPCWSTR childName)
 {
 	for (list<CObject*>::iterator iter = m_Children.begin(); iter != m_Children.end(); iter++)
 	{
-		if (wcscmp((*iter)->m_Name, childName) == 0)
+		if ((*iter)->m_Name.compare(childName) == 0)
 		{
 			return (*iter);
 		}
@@ -171,7 +175,8 @@ void CObject::SetMaterial(CMaterial* pMat)
 //
 // 메쉬/기하 정보 읽기
 //
-bool LoadMesh(LPDEVICE pDevice, LPCWSTR fileName, CObject* o_pObject)
+// 로드메쉬 안에 히어로로 임시로 바꿈 나중에 수정 필요
+bool LoadMesh(LPDEVICE pDevice, LPCWSTR fileName, CObject** o_pObject, CMaterial* pMat)
 {
 	wifstream file(fileName);
 
@@ -447,19 +452,17 @@ bool LoadMesh(LPDEVICE pDevice, LPCWSTR fileName, CObject* o_pObject)
 	else if (meshes.size() == 1)
 	{
 		CModel* model = new CModel;
-		model->Create(pDevice, meshes[0], nullptr);
+		model->Create(pDevice, meshes[0], pMat);
 
-		CObject* obj = new CObject;
+		CObject* obj = new Hero;
 		obj->Create(pDevice, meshes[0]->m_Name, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f), model);
 
-		CSceneManager::CurrentScene->AddObject(obj);
-
-		o_pObject = obj;
+		*o_pObject = obj;
 	}
 
 	else
 	{
-		CObject* parent = new CObject;
+		CObject* parent = new Hero;
 		parent->Create(pDevice, fileName, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f));
 
 		CSceneManager::CurrentScene->AddObject(parent);
@@ -467,15 +470,13 @@ bool LoadMesh(LPDEVICE pDevice, LPCWSTR fileName, CObject* o_pObject)
 		for (UINT i = 0; i < meshes.size(); i++)
 		{
 			CModel* model = new CModel;
-			model->Create(pDevice, meshes[i], nullptr);
+			model->Create(pDevice, meshes[i], pMat);
 
 			CObject* obj = new CObject;
 			obj->Create(pDevice, meshes[i]->m_Name, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f), model, parent);
-
-			CSceneManager::CurrentScene->AddObject(obj);
 		}
 
-		o_pObject = parent;
+		*o_pObject = parent;
 	}
 
 	return true;

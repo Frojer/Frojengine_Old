@@ -7,11 +7,12 @@ using namespace std;
 class CObject
 {
 public:
-	LPCWSTR m_Name;
+	wstring m_Name;
 
 	VECTOR3 m_Pos;
 	VECTOR3 m_Rot;
 	VECTOR3 m_Scale;
+	list<CObject*> m_Children;
 
 protected:
 	VECTOR3 m_Look;
@@ -24,7 +25,6 @@ protected:
 	CModel*	m_pModel;
 
 	CObject* m_pParent;
-	list<CObject*> m_Children;
 
 protected:
 	LPDEVICE m_pDevice;
@@ -35,7 +35,7 @@ public:
 	CObject(const CObject& obj);
 	virtual ~CObject();
 
-	virtual bool Create(LPDEVICE pDevice, LPCWSTR name, XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale, CModel* pModel = nullptr, CObject* parent = nullptr);
+	virtual bool Create(LPDEVICE pDevice, wstring name, XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale, CModel* pModel = nullptr, CObject* parent = nullptr);
 	virtual void Destroy();
 
 protected:
@@ -59,4 +59,4 @@ public:
 	friend void CScene::ReleaseObjs();
 };
 
-bool LoadMesh(LPDEVICE pDevice, LPCWSTR fileName, CObject* o_pObject);
+bool LoadMesh(LPDEVICE pDevice, LPCWSTR fileName, CObject** o_pObject, CMaterial* pMat);

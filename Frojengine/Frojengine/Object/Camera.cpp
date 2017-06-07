@@ -1,4 +1,5 @@
 #include "..\Frojengine.h"
+#include "..\System\GraphicsSystem.h"
 
 CCamera::CCamera()
 {
@@ -54,6 +55,8 @@ void CCamera::SetViewport(D3D11_VIEWPORT& viewport)
 void CCamera::UseCamera()
 {
 	m_pDXDC->RSSetViewports(1, &m_Viewport);
+	CGraphicsSystem::SetViewMatrix(GetViewMatrixLH());
+	CGraphicsSystem::SetProjectionMatrix(GetPerspectiveFovLH());
 }
 
 
@@ -65,19 +68,25 @@ void CCamera::CameraUpdate()
 
 
 
-MATRIXA CCamera::GetViewMatrixLH()
+MATRIX CCamera::GetViewMatrixLH()
 {
 	VECTOR pos = XMLoadFloat3(&m_Pos);
 	VECTOR lookAt = XMLoadFloat3(&m_LookAt);
 	VECTOR up = XMLoadFloat3(&m_Up);
 
-	return XMMatrixLookAtLH(pos, lookAt, up);
+	MATRIX mView;
+	XMStoreFloat4x4(&mView, XMMatrixLookAtLH(pos, lookAt, up));
+
+	return mView;
 }
 
 
-MATRIXA CCamera::GetPerspectiveFovLH(DISPLAYMODE mode)
+MATRIX CCamera::GetPerspectiveFovLH()
 {
-	return XMMatrixPerspectiveFovLH(m_FOV, m_Aspect, m_Znear, m_Zfar);
+	MATRIX mProj;
+	XMStoreFloat4x4(&mProj, XMMatrixPerspectiveFovLH(m_FOV, m_Aspect, m_Znear, m_Zfar));
+
+	return mProj;
 }
 
 

@@ -273,6 +273,7 @@ void CEngineSystem::Update()
 	//------------------------------- 
 	
 	GetEngineTime();
+	m_pGraphics->RenderModeUpdate();
 
 	CMesh::CheckDeleteList();
 

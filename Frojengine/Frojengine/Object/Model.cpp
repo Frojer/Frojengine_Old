@@ -100,6 +100,24 @@ bool CModel::CreateBuffer()
 		return false;
 	}
 
+
+	// 인덱스 버퍼 Index Buffer 생성
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(int) * m_pMesh->GetIndexSize();
+	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA InitData;
+	ZeroMemory(&InitData, sizeof(InitData));
+	InitData.pSysMem = &m_pMesh->m_Indices[0];
+
+	// 인덱스 버퍼 생성
+	hr = m_pDevice->CreateBuffer(&bd, &InitData, &m_pIB);
+	if (FAILED(hr))
+		return false;
+
+
 	m_Stride = sizeof(VertexFormat);
 	m_Offset = 0;
 
@@ -114,8 +132,6 @@ bool CModel::CreateBuffer()
 //
 bool CModel::LoadMaterial(CMaterial* pMaterial)
 {
-	HRESULT hr = S_OK;
-
 
 	// 각 모델당 전용 셰이더를 생성하거나 전체 엔진에서 공유되는 셰이더가 사용될 수 있습니다.
 	// 셰이더는 필요시 '교체가능'한 목록임을 상기합시다.
@@ -133,7 +149,7 @@ bool CModel::LoadMaterial(CMaterial* pMaterial)
 	m_pMaterial = pMaterial;
 
 
-	return hr;
+	return true;
 }
 
 
@@ -169,9 +185,9 @@ bool CModel::LoadLayout()
 		//  Sementic          format                       offset         classification             
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		//{ "COLOR",    0, DXGI_FORMAT_R8G8B8A8_UNORM,     0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }, 	//DWORD 형 색상		
-		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		//{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
 	UINT numElements = ARRAYSIZE(layout);
@@ -244,9 +260,24 @@ void CModel::Draw()
 
 	//-----------------------
 	// 기하 정보 설정
+	//-----------------------
+
+	//----------------------------------------------------------------------
+	// 바른 렌더링 결과를 위해서는 아래의 조건이 동일 또는 호환되어야 합니다.
+	// 1.정점 버퍼의 데이터.  Vertex Buffer Data
+	// 2.정점 구조 Vertex Format (Input Layout)
+	// 3.셰이더 함수의 입력구조.  Vertex Shader (Input Layout)
+	// 4.각종 변환 처리 Vertex Transform
+	//----------------------------------------------------------------------
+	// 정점 버퍼 설정. Set vertex buffer
+	// 디바이스의 입력-조립 스테이지 (Input-Assembler Stage) 에 정점버퍼를 연결.(Binding)
+	//-----------------------
+	// 기하 정보 설정
 	// 메쉬- 캐릭터 - 를 디바이스에 등록한다. 
 	//-----------------------
 	m_pDXDC->IASetVertexBuffers(0, 1, &m_pVB, &m_Stride, &m_Offset);
+	m_pDXDC->IASetIndexBuffer(m_pIB, DXGI_FORMAT_R32_UINT, 0);
+
 	// 입력 레이아웃 설정. Set the input layout
 	m_pDXDC->IASetInputLayout(m_pInputLayout);
 	// 기하 위상 구조 설정 Set primitive topology
@@ -258,12 +289,13 @@ void CModel::Draw()
 	//------------------------------------
 	// 상수 버퍼 설정 & 갱신.
 	// 셰이더 설정 ...
+	
 	m_pMaterial->Apply();
 
 	//-----------------------
 	// 그리기!  
 	//-----------------------
-	m_pDXDC->Draw(m_pMesh->GetVertexSize(), 0);
+	m_pDXDC->DrawIndexed(m_pMesh->GetIndexSize(), 0, 0);
 
 
 	// 렌더링 옵션 복구 : 타 모델/유닛 렌더링을 위한 장치 설정 리셋(옵션)

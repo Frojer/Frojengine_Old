@@ -1,4 +1,5 @@
 #include "MainScene.h"
+#include "Frojengine\System\GraphicsSystem.h"
 
 bool MainScene::Load()
 {
@@ -21,11 +22,10 @@ bool MainScene::Load()
 	vp.MinDepth = 0.0f;
 	vp.MaxDepth = 1.0f;
 
-	m_pCamera->Create(m_pDevice, VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), 45, 1, 1000, 800, 600, vp);
+	m_pCamera->Create(m_pDevice, VECTOR3(0.0f, 5.0f, -20.0f), VECTOR3(0.0f, 1.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), 45.0f, 1.0f, 100.0f, 800, 600, vp);
 
-	result = LoadMesh(m_pDevice, L"Resource/Bastion_Final.obj", m_pHero);
-
-	
+	// 로드메쉬 안에 히어로로 임시로 바꿈 나중에 수정 필요
+	result = LoadMesh(m_pDevice, L"Resource/test.obj", (CObject**)&m_pHero, pMat);
 
 	if (!result)
 	{
@@ -48,6 +48,17 @@ bool MainScene::Load()
 
 void MainScene::SceneRender()
 {
+	// 렌더링 옵션 조절
+	if (IsKeyUp(VK_SPACE))	CGraphicsSystem::m_bWireFrame = !CGraphicsSystem::m_bWireFrame;
+	if (IsKeyUp(VK_F4))		CGraphicsSystem::m_bCullBack = !CGraphicsSystem::m_bCullBack;
+	//if (IsKeyUp(VK_F5))		g_bZEnable ^= TRUE;		
+	//if (IsKeyUp(VK_F6))		g_bZWrite ^= TRUE;		
+
+
+	// 배경색 설정.
+	if (CGraphicsSystem::m_bWireFrame)	CGraphicsSystem::m_BackColor = COLOR(0.20f, 0.20f, 0.20f, 1);
+	else								CGraphicsSystem::m_BackColor = COLOR(0, 0.12f, 0.35f, 1);
+
 	//도움말 및 기타 렌더링 정보 출력.
 	//프레임수 표시.
 	PutFPS(0, 0);

@@ -36,8 +36,8 @@ public:
 	void UseCamera();
 	void CameraUpdate();
 
-	MATRIXA GetViewMatrixLH();
-	MATRIXA GetPerspectiveFovLH(DISPLAYMODE mode);
+	MATRIX GetViewMatrixLH();
+	MATRIX GetPerspectiveFovLH();
 
 	void SetFOV(float fovAngle) { m_FOV = XMConvertToRadians(fovAngle); }
 	float GetFOV() { return m_FOV; }
